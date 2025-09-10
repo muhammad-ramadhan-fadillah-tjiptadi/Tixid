@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -24,7 +25,7 @@ class UserController extends Controller
             'last_name' => 'required|min:1',
             'email' => 'required|email:dns',
             'password' => 'required|min:8'
-        ],[
+        ], [
             'first_name.required' => 'First name wajib di isi',
             'first_name.min' => 'First name minimal 1',
             'last_name.required' => 'Last name wajib di isi',
@@ -47,9 +48,40 @@ class UserController extends Controller
         if ($createData) {
             // redirect untuk mengarahkan ke route, with adalah untuk memberikan pesan
             return redirect()->route('login')->with('success', 'Berhasil membuat akun! Silahkan login!');
-        }else {
+        } else {
             return redirect()->route('signup')->with('failed', 'Gagal memperoleh data! Silahkan coba lagi!');
         }
+    }
+
+    public function authentication(Request $request)
+    {
+        $request->validate([
+            'email' => 'required',
+            'password' => 'required'
+        ], [
+            'email.required' => 'Email Harus Diisi',
+            'password.required' => 'Passwoord Harus Diisi'
+        ]);
+        // Data yang akan digunakan untuk verifikasi
+        $data = $request->only(['password', 'email']);
+        // Auth->attempt() -> mencocokan data (email-pw /username-pw)
+        if (Auth::attempt($data)) {
+            // Jika data email-pw cocok
+            if (Auth::user()->role == 'admin') {
+                // Dicek lagi terkait rolenya, kalo admin ke dashboard
+                return redirect()->route('admin.dashboard')->with('success', 'Berhasil Login!');
+            }
+            return redirect()->route('home')->with('success', 'Berhasil Login!');
+        } else {
+            return redirect()->back()->with('error', 'Gagal! Pastikan Email dan Password Benar');
+        }
+    }
+
+    public function logout()
+    {
+        // Logout () -> menghapus sesi login
+        Auth::logout();
+        return redirect()->route('home')->with('logout', 'Anda Telah Berhasil Logout! Silahkan Login Kembali Untuk Akses Lengkap');
     }
 
     /**

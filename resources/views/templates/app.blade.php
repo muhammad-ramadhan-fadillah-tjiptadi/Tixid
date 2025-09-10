@@ -36,15 +36,40 @@
             <div class="collapse navbar-collapse" id="navbarButtonsExample">
                 <!-- Left links -->
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Beranda</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Bioskop</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Tiket</a>
-                    </li>
+                    {{-- Jika sudah login (check) dan rolenya admin (user()->role) --}}
+                    @if (Auth::check() && Auth::user()->role == 'admin')
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Dashboard</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a data-mdb-dropdown-init class="nav-link dropdown-toggle" href="#"
+                                id="navbarDropdownMenuLink" role="button" aria-expanded="false">
+                                Data Master
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                <li>
+                                    <a class="dropdown-item" href="#">Data Bioskop</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">Data Film</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">Data Petugas</a>
+                                </li>
+                            </ul>
+                        </li>
+                    @else
+                        {{-- Jika bukan admin/belum login,munculin ini --}}
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Beranda</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Bioskop</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Tiket</a>
+                        </li>
+                    @endif
                 </ul>
                 {{-- <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
@@ -60,12 +85,17 @@
                 <!-- Left links -->
 
                 <div class="d-flex align-items-center">
-                    <a href="{{ route('login') }}" class="btn btn-link text-warning px-3 me-2">
-                        Login
-                    </a>
-                    <a href="{{ route('signup') }}" class="btn btn-warning me-3">
-                        Sign up for free
-                    </a>
+                    {{-- Auth::check() : Mengecheck udah login/belum --}}
+                    @if (Auth::check())
+                        <a href="{{ route('logout') }}" class="btn btn-danger">logout</a>
+                    @else
+                        <a href="{{ route('login') }}" class="btn btn-link text-warning px-3 me-2">
+                            Login
+                        </a>
+                        <a href="{{ route('signup') }}" class="btn btn-warning me-3">
+                            Sign up for free
+                        </a>
+                    @endif
                 </div>
             </div>
             <!-- Collapsible wrapper -->
@@ -78,8 +108,7 @@
     @yield('content')
 
     <!-- MDB -->
-    <script type="text/javascript"
-        src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/9.1.0/mdb.umd.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/9.1.0/mdb.umd.min.js"></script>
 </body>
 
 </html>

@@ -29,5 +29,12 @@ Route::get('/signup', function () {
 // Route post untuk menambahkan data yang ditampilkan
 // Kenapa memakai UserController karna aken mengisi tabel user
 Route::post('/signup', [UserController::class, 'register'])->name('signup.send_data');
+Route::post('/auth', [UserController::class, 'authentication'])->name('auth');
+Route::get('/logout', [UserController::class, 'logout'])->name('logout');
 // Page untuk mengubah data
 // Delete untuk menghapus data
+
+// Untuk Halaman Admin
+Route::get('/admin/dashboard', function() {
+    return view('admin.dashboard');
+})->name('admin.dashboard');

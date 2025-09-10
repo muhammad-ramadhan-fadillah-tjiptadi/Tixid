@@ -3,6 +3,14 @@
 
 {{-- Ngisi Yield Content --}}
 @section('content')
+    @if (Session::get('success'))
+        {{-- Auth::user() Mengambil data user yang login --}}
+        <div class="alert alert-success">{{ Session::get('success') }} <b>Selamat Datang, {{ Auth::user()->name }}</b></div>
+        {{-- Auth::user() -> name : kata name diambil dari model user - fillable --}}
+    @endif
+    @if (Session::get('logout'))
+        <div class="alert alert-warning">{{Session::get('logout')}}</div>
+    @endif
     <div class="dropdown">
         <button class="btn btn-light w-100 text-start dropdown-toggle" type="button" id="dropdownMenuButton"
             data-mdb-dropdown-init data-mdb-ripple-init aria-expanded="false">

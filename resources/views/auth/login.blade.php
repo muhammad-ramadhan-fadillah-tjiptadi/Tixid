@@ -17,20 +17,30 @@
 
 <body>
 
-    <form class="w-50 d-block mx-auto my-5">
+    <form class="w-50 d-block mx-auto my-5" method="POST" action="{{ route('auth') }}">
         {{-- Class menggunakan pascal dan menghubungkan dengan static :: llau get adalah method --}}
+        @csrf
         @if (Session::get('success'))
             <div class="alert alert-success my-3">{{ Session::get('success') }}</div>
         @endif
+        @if (Session::get('error'))
+            <div class="alert alert-danger">{{ Session::get('error') }}</div>
+        @endif
         <!-- Email input -->
+        @error('email')
+            <small class="text-danger">{{ $message }}</small>
+        @enderror
         <div data-mdb-input-init class="form-outline mb-4">
-            <input type="email" id="form1Example1" class="form-control" />
+            <input type="email" id="form1Example1" class="form-control @error('email') is-invalid @enderror" name="email"/>
             <label class="form-label" for="form1Example1">Email address</label>
         </div>
 
         <!-- Password input -->
+        @error('password')
+            <small class="text-danger">{{ $message }}</small>
+        @enderror
         <div data-mdb-input-init class="form-outline mb-4">
-            <input type="password" id="form1Example2" class="form-control" />
+            <input type="password" id="form1Example2" class="form-control @error('password') is-invalid @enderror" name="password"/>
             <label class="form-label" for="form1Example2">Password</label>
         </div>
 
