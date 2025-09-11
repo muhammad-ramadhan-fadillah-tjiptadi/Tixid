@@ -23,7 +23,7 @@ class CinemaController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.cinemas.create');
     }
 
     /**
@@ -31,7 +31,23 @@ class CinemaController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required',
+            'location' => 'required|min:10',
+        ], [
+            'name.required' => 'Nama biokop harus di isi',
+            'location.required' => 'Lokasi harus di isi',
+            'location.min' => 'Lokasi harus di isi setidaknya 10 karakter'
+        ]);
+        $createData = Cinema::create([
+            'name' => $request->name,
+            'location' => $request->location,
+        ]);
+        if ($createData) {
+            return redirect()->route('admin.cinemas.index')->with('Success', 'Berhasil membuat data baru!');
+        } else {
+            return redirect()->back()->with('Error', 'Gagal, silakan coba lagi');
+        }
     }
 
     /**
@@ -45,23 +61,47 @@ class CinemaController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Cinema $cinema)
+    public function edit($id)
     {
-        //
+        //edit($id) => $id dari {id} di route edit
+        //Cinema::find() => mencari data di tabel cinemas berdasarkan id
+        $cinema = Cinema::find($id);
+        //dd() => cek data
+        // dd($cinema->toArray());
+        return view('admin.cinemas.edit', compact('cinema'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Cinema $cinema)
+    public function update(Request $request, $id)
     {
-        //
+        //(Request $request, $id) : Request $request (ambil data form), $id ambil parameter placeholder {id} dari route
+        $request->validate([
+            'name' => 'required',
+            'location' => 'required|min:10',
+        ], [
+            'name.required' => 'Nama bioskop wajib di isi',
+            'location.required' => 'Lokasi bioskop harus di isi',
+            'location.min' => 'Lokasi bioskop harus di isi minimal 10 karakter'
+        ]);
+        //where ('id', $id) -> sebelum di update wajib cari datanya, untuk mencari salah satunya dengan where
+        //format -> where ('field'_di_fillable', $sumberData)
+        $updateData = Cinema::where('id', $id)->update([
+            'name' => $request->name,
+            'location' => $request->location,
+        ]);
+        if ($updateData) {
+            return redirect()->route('admin.cinemas.index')->with('Success', 'Berhasil mengubah data');
+        } else {
+            return redirect()->back()->with('Error', 'Gagal! silahkan coba lagi');
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Cinema $cinema)
+    public function destroy($id)
     {
         //
     }

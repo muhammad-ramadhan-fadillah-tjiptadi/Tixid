@@ -41,9 +41,26 @@ Route::get('/logout', [UserController::class, 'logout'])->name('logout');
 Route::middleware('isAdmin')->prefix('isAdmin')->name('admin.')->group(function () {
     Route::get('/admin/dashboard', function () {
         return view('admin.dashboard');
-    })->name('admin.dashboard');
+    })->name('dashboard');
 
+    // Bioskop
     Route::prefix('/cinemas')->name('cinemas.')->group(function () {
         Route::get('/index', [CinemaController::class, 'index'])->name('index');
+        Route::get('/create', [CinemaController::class, 'create'])->name('create');
+        Route::post('/store', [CinemaController::class, 'store'])->name('store');
+        // paameter placeholder - {id} : Mencari data spesifik
+        Route::get('/edit/{id}', [CinemaController::class, 'edit'])->name('edit');
+        Route::put('/update/{id}', [CinemaController::class, 'update'])->name('update');
+        Route::delete('/delete/{id}', [CinemaController::class, 'destroy'])->name('delete');
     });
+});
+
+Route::middleware('isGuest')->group(function () {
+    Route::get('/login', function () {
+        return view('auth.login');
+    })->name('login');
+
+    Route::get('/signup', function () {
+        return view('auth.signup');
+    })->name('signup');
 });
