@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\CinemaController;
 
 Route::get('/', function () {
     return view('home');
@@ -29,12 +30,20 @@ Route::get('/signup', function () {
 // Route post untuk menambahkan data yang ditampilkan
 // Kenapa memakai UserController karna aken mengisi tabel user
 Route::post('/signup', [UserController::class, 'register'])->name('signup.send_data');
+
 Route::post('/auth', [UserController::class, 'authentication'])->name('auth');
+
 Route::get('/logout', [UserController::class, 'logout'])->name('logout');
 // Page untuk mengubah data
 // Delete untuk menghapus data
 
 // Untuk Halaman Admin
-Route::get('/admin/dashboard', function() {
-    return view('admin.dashboard');
-})->name('admin.dashboard');
+Route::middleware('isAdmin')->prefix('isAdmin')->name('admin.')->group(function () {
+    Route::get('/admin/dashboard', function () {
+        return view('admin.dashboard');
+    })->name('admin.dashboard');
+
+    Route::prefix('/cinemas')->name('cinemas.')->group(function () {
+        Route::get('/index', [CinemaController::class, 'index'])->name('index');
+    });
+});

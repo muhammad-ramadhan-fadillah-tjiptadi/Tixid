@@ -12,7 +12,10 @@ class CinemaController extends Controller
      */
     public function index()
     {
-        //
+        //model::all() -> mengambil semua data di model
+        $cinemas = Cinema::all();
+        //compact() -> mengirim data ke blade, nama compact sama dengan nama variable
+        return view('admin.cinemas.index', compact('cinemas'));
     }
 
     /**
