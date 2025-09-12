@@ -8,7 +8,7 @@ Route::get('/', function () {
     return view('home');
 })->name('home');
 
-Route::get('/schedules/detail', function(){
+Route::get('/schedules/detail', function () {
     //standar penulisan :
     // path (mengacu ke data/fitur) gunakan jamak, folder view fitur gunakan tunggal
     return view('schedule.detail');
@@ -38,20 +38,31 @@ Route::get('/logout', [UserController::class, 'logout'])->name('logout');
 // Delete untuk menghapus data
 
 // Untuk Halaman Admin
-Route::middleware('isAdmin')->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('dashboard');
+Route::middleware('isAdmin')->group(function () {
+    Route::prefix('admin')->name('admin.')->group(function () {
+        Route::get('/dashboard', function () {
+            return view('admin.dashboard');
+        })->name('dashboard');
 
-    // Bioskop
-    Route::prefix('/cinemas')->name('cinemas.')->group(function () {
-        Route::get('/index', [CinemaController::class, 'index'])->name('index');
-        Route::get('/create', [CinemaController::class, 'create'])->name('create');
-        Route::post('/store', [CinemaController::class, 'store'])->name('store');
-        // paameter placeholder - {id} : Mencari data spesifik
-        Route::get('/edit/{id}', [CinemaController::class, 'edit'])->name('edit');
-        Route::put('/update/{id}', [CinemaController::class, 'update'])->name('update');
-        Route::delete('/delete/{id}', [CinemaController::class, 'destroy'])->name('delete');
+        // Cinemas
+        Route::prefix('cinemas')->name('cinemas.')->group(function () {
+            Route::get('/index', [CinemaController::class, 'index'])->name('index');
+            Route::get('/create', [CinemaController::class, 'create'])->name('create');
+            Route::post('/store', [CinemaController::class, 'store'])->name('store');
+            Route::get('/edit/{id}', [CinemaController::class, 'edit'])->name('edit');
+            Route::put('/update/{id}', [CinemaController::class, 'update'])->name('update');
+            Route::delete('/delete/{id}', [CinemaController::class, 'destroy'])->name('delete');
+        });
+
+        // Users
+        Route::prefix('users')->name('users.')->group(function () {
+            Route::get('/index', [UserController::class, 'index'])->name('index');
+            Route::get('/create', [UserController::class, 'create'])->name('create');
+            Route::post('/store', [UserController::class, 'store'])->name('store');
+            Route::get('/edit/{id}', [UserController::class, 'edit'])->name('edit');
+            Route::put('/update/{id}', [UserController::class, 'update'])->name('update');
+            Route::delete('/delete/{id}', [UserController::class, 'destroy'])->name('delete');
+        });
     });
 });
 

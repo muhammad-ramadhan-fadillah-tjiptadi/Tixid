@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="w-75 d-block mx-auto my-5 p-4">
-        <h5 class="text-center mb-3">Edit data bioskop</h5>
+        <h5 class="text-center mb-3">Edit Data Bioskop</h5>
         <form method="POST" action="{{ route('admin.cinemas.update', ['id' => $cinema['id']]) }}">
             @csrf
             {{-- menimpa method "POST" html menjadi put--}}

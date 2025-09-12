@@ -14,7 +14,8 @@ class UserController extends Controller
      */
     public function index()
     {
-        //
+        $users = User::whereIn('role', ['admin', 'staff'])->get();
+        return view('admin.users.index', compact('users'));
     }
 
     public function register(Request $request)
@@ -68,7 +69,7 @@ class UserController extends Controller
         if (Auth::attempt($data)) {
             // Jika data email-pw cocok
             if (Auth::user()->role == 'admin') {
-                // Dicek lagi terkait rolenya, kalo admin ke dashboard  
+                // Dicek lagi terkait rolenya, kalo admin ke dashboard
                 return redirect()->route('admin.dashboard')->with('success', 'Berhasil Login!');
             }
             return redirect()->route('home')->with('success', 'Berhasil Login!');
@@ -89,7 +90,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.users.create');
     }
 
     /**
@@ -97,7 +98,27 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required',
+        ], [
+            'name.required' => 'Nama pengguna wajib di isi',
+            'email.required' => 'Email pengguna wajib di isi',
+            'email.unique' => 'Email sudah pernah di gunakan',
+            'email.email' => 'Email tidak valid',
+        ]);
+        $createData = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'role' => 'staff',
+            'password' => $request->password,
+        ]);
+        if ($createData) {
+            return redirect()->route('admin.users.index')->with('Success', 'Berhasil membuat data baru!');
+        } else {
+            return redirect()->back()->with('Error', 'Gagal, silahkan coba lagi!');
+        }
     }
 
     /**
@@ -113,7 +134,8 @@ class UserController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $user = User::find($id);
+        return view('admin.users.edit', compact('user'));
     }
 
     /**
@@ -121,7 +143,26 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required|email:dns',
+        ], [
+            'name.required' => 'Nama wajib di isi',
+            'email.required' => 'Email wajib di isi',
+            'email.email' => 'Email tidak valid',
+            'role' => 'staff',
+        ]);
+        //where ('id', $id) -> sebelum di update wajib cari datanya, untuk mencari salah satunya dengan where
+        //format -> where ('field'_di_fillable', $sumberData)
+        $updateData = User::where('id', $id)->update([
+            'name' => $request->name,
+            'email' => $request->email,
+        ]);
+        if ($updateData) {
+            return redirect()->route('admin.users.index')->with('Success', 'Berhasil mengubah data');
+        } else {
+            return redirect()->back()->with('Error', 'Gagal! silahkan coba lagi');
+        }
     }
 
     /**
@@ -129,6 +170,7 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        User::where('id', $id)->delete();
+        return redirect()->route('admin.users.index')->with('Success', 'Berhasil menghapus data!');
     }
 }

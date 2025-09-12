@@ -54,7 +54,7 @@
                                     <a class="dropdown-item" href="#">Data Film</a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item" href="#">Data Petugas</a>
+                                    <a class="dropdown-item" href="{{ route('admin.users.index')}}">Data Petugas</a>
                                 </li>
                             </ul>
                         </li>
