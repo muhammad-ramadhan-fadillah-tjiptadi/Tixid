@@ -39,7 +39,7 @@
                     {{-- Jika sudah login (check) dan rolenya admin (user()->role) --}}
                     @if (Auth::check() && Auth::user()->role == 'admin')
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Dashboard</a>
+                            <a class="nav-link" href="{{ route('admin.dashboard') }}">Dashboard</a>
                         </li>
                         <li class="nav-item dropdown">
                             <a data-mdb-dropdown-init class="nav-link dropdown-toggle" href="#"
@@ -48,7 +48,7 @@
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                 <li>
-                                    <a class="dropdown-item" href="#">Data Bioskop</a>
+                                    <a class="dropdown-item" href="{{ route('admin.cinemas.index') }}">Data Bioskop</a>
                                 </li>
                                 <li>
                                     <a class="dropdown-item" href="#">Data Film</a>

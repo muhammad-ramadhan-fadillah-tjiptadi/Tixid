@@ -103,6 +103,7 @@ class CinemaController extends Controller
      */
     public function destroy($id)
     {
-        //
+        Cinema::where('id', $id)->delete();
+        return redirect()->route('admin.cinemas.index')->with('Success', 'Berhasil menghapus data!');
     }
 }
