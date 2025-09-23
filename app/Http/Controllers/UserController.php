@@ -115,9 +115,9 @@ class UserController extends Controller
             'password' => $request->password,
         ]);
         if ($createData) {
-            return redirect()->route('admin.users.index')->with('Success', 'Berhasil membuat data baru!');
+            return redirect()->route('admin.users.index')->with('success', 'Berhasil membuat data baru!');
         } else {
-            return redirect()->back()->with('Error', 'Gagal, silahkan coba lagi!');
+            return redirect()->back()->with('error', 'Gagal, silahkan coba lagi!');
         }
     }
 

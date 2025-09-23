@@ -3,10 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CinemaController;
+use App\Http\Controllers\MovieController;
 
-Route::get('/', function () {
-    return view('home');
-})->name('home');
+Route::get('/', [MovieController::class, 'home'])->name('home');
 
 Route::get('/schedules/detail', function () {
     //standar penulisan :
@@ -52,6 +51,13 @@ Route::middleware('isAdmin')->group(function () {
             Route::get('/edit/{id}', [CinemaController::class, 'edit'])->name('edit');
             Route::put('/update/{id}', [CinemaController::class, 'update'])->name('update');
             Route::delete('/delete/{id}', [CinemaController::class, 'destroy'])->name('delete');
+        });
+
+        // Film
+        Route::prefix('/movies')->name('movies.')->group(function(){
+            Route::get('/', [MovieController::class, 'index'])->name('index');
+            Route::get('/create', [MovieController::class, 'create'])->name('create');
+            Route::post('/store', [MovieController::class, 'store'])->name('store');
         });
 
         // Users

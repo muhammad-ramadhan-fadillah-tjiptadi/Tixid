@@ -9,7 +9,7 @@
         {{-- Auth::user() -> name : kata name diambil dari model user - fillable --}}
     @endif
     @if (Session::get('logout'))
-        <div class="alert alert-warning">{{Session::get('logout')}}</div>
+        <div class="alert alert-warning">{{ Session::get('logout') }}</div>
     @endif
     <div class="dropdown">
         <button class="btn btn-light w-100 text-start dropdown-toggle" type="button" id="dropdownMenuButton"
@@ -100,33 +100,17 @@
         <button class="btn btn-outline-secondary rounded-pill">Imax</button>
     </div>
     <div class="container d-flex gap-5 mt-4 justify-content-center">
-        <div class="card" style="width: 18rem;">
-            <img src="https://i.pinimg.com/736x/4e/ac/c9/4eacc9f48bfb15b1ef9685ce690c1f6a.jpg" class="card-img-top"
-                alt="Sunset Over the Sea" style="height: 350px; object-fit: cover;" />
-            {{-- Object fit: cover -> gambar ukurannya sesuai dengan height dan width --}}
-            <div class="card-body bg-warning" style="padding: 0 !important; text-align: center;">
-                {{-- Karna default card text ad paddingnya, biar paddingnya yang dibaca dari style jadi dikasi !important (memprioritaskan style) --}}
-                <p class="card-text" style="padding: 0 !important; text-align: center; font-weight: bold;"><a href="{{route('schedules.detail')}}">BELI TIKET</a></p>
+        @foreach ($movies as $key => $item)
+            <div class="card" style="width: 18rem;">
+                <img src="{{ asset('storage/' . $item['poster']) }}" class="card-img-top" alt="{{ $item['title'] }}"
+                    style="height: 350px; object-fit: cover;">
+                <div class="card-body bg-warning" style="padding: 0 !important; text-align: center;">
+                    {{-- Karna default card text ad paddingnya, biar paddingnya yang dibaca dari style jadi dikasi !important (memprioritaskan style) --}}
+                    <p class="card-text" style="padding: 0 !important; text-align: center; font-weight: bold;"><a
+                            href="{{ route('schedules.detail') }}">BELI TIKET</a></p>
+                </div>
             </div>
-        </div>
-        <div class="card" style="width: 18rem;">
-            <img src="https://i.pinimg.com/736x/d5/2b/65/d52b658435f26ec93fb452574ba21f23.jpg" class="card-img-top"
-                alt="Sunset Over the Sea" style="height: 350px; object-fit: cover;" />
-            {{-- Object fit: cover -> gambar ukurannya sesuai dengan height dan width --}}
-            <div class="card-body bg-warning" style="padding: 0 !important; text-align: center;">
-                {{-- Karna default card text ad paddingnya, biar paddingnya yang dibaca dari style jadi dikasi !important (memprioritaskan style) --}}
-                <p class="card-text" style="padding: 0 !important; text-align: center; font-weight: bold;"><a href="{{route('schedules.detail')}}">BELI TIKET</a></p>
-            </div>
-        </div>
-        <div class="card" style="width: 18rem;">
-            <img src="https://i.pinimg.com/736x/cc/00/9a/cc009a1deba43f58e2e98a73db4f8c0c.jpg" class="card-img-top"
-                alt="Sunset Over the Sea" style="height: 350px; object-fit: cover;" />
-            {{-- Object fit: cover -> gambar ukurannya sesuai dengan height dan width --}}
-            <div class="card-body bg-warning" style="padding: 0 !important; text-align: center;">
-                {{-- Karna default card text ad paddingnya, biar paddingnya yang dibaca dari style jadi dikasi !important (memprioritaskan style) --}}
-                <p class="card-text" style="padding: 0 !important; text-align: center; font-weight: bold;"><a href="{{route('schedules.detail')}}">BELI TIKET</a></p>
-            </div>
-        </div>
+        @endforeach
     </div>
     <footer class="bg-body-tertiary text-center text-lg-start mt-5">
         <!-- Copyright -->

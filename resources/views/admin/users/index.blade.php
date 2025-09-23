@@ -27,8 +27,10 @@
                     <th>
                         @if ($item['role'] == 'admin')
                             <span class="badge badge-primary">Admin</span>
-                        @else
+                        @elseif($item['role'] == 'staff')
                             <span class="badge badge-success">Staff</span>
+                        @elseif($item['role'] == 'user')
+                            <span class="badge badge-warning">User</span>
                         @endif
                     </th>
                     <th class="d-flex">
