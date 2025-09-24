@@ -76,7 +76,7 @@ class CinemaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //(Request $request, $id) : Request $request (ambil data form), $id ambil parameter placeholder {id} dari route
+        //(Request $request,                     <td>{{ $key + 1 }}</td>$id) : Request $request (ambil data form), $id ambil parameter placeholder {id} dari route
         $request->validate([
             'name' => 'required',
             'location' => 'required|min:10',

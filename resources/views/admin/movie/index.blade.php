@@ -19,34 +19,36 @@
                 <th>Status Aktif</th>
                 <th>Aksi</th>
             </tr>
-            @foreach ($movies as $key => $item)
+            @foreach ($movies as $key => $movie)
                 <tr>
-                    <th{{ $key + 1 }}>
-                        <th>
-                            {{-- assets() : memangiil folder public --}}
-                            <img src="{{ asset('storage/' . $item['poster']) }}" width="120">
-                        </th>
-                        <th>
-                            {{ $item['title'] }}
-                        </th>
-                        <th>
-                            @if ($item['activated'] == 1)
-                                <span class="badge badge-success">Aktif</span>
-                            @else
-                                <span class="badge badge-danger">Non-Aktif</span>
+                    <td>{{ $key + 1 }}</td>
+                    <td>
+                        <img src="{{ asset('storage/' . $movie->poster) }}" width="120" class="img-fluid">
+                    </td>
+                    <td>{{ $movie->title }}</td>
+                    <td>
+                        @if ($movie->activated == 1)
+                            <span class="badge bg-success">Aktif</span>
+                        @else
+                            <span class="badge bg-danger">Non-Aktif</span>
+                        @endif
+                    </td>
+                    <td class="d-flex">
+                        <button class="btn btn-secondary me-2" onclick="showModal({{ $movie }})">Detail</button>
+                        <a href="{{ route('admin.movies.edit', $movie->id) }}" class="btn btn-primary me-2">Edit</a>
+                        <form action="{{ route('admin.movies.delete', $movie->id) }}" method="POST" class="me-2">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger">Hapus</button>
+                        </form>
+                        <form action="{{ route('admin.movies.patch', $movie->id) }}" method="POST">
+                            @csrf
+                            @method('PATCH')
+                            @if ($movie->activated == 1)
+                                <button type="submit" class="btn btn-warning">Non-Aktifkan</button>
                             @endif
-                        </th>
-                        <th class="d-flex">
-                            {{-- event (tanda depan on) JS : menentukan js kapan dibaca --}}
-                            {{-- onclick: menjalankan js ketika btn di klik --}}
-                            <button class="btn btn-secondary me-2" onclick="showModal({{ $item }})">Detail</button>
-                            <a href="" class="btn btn-primary me-2">Edit</a>
-                            <button class="btn btn-danger me-2">Hapus</button>
-                            @if ($item['activated'] == 1)
-                                <button class="btn btn-warning">Non-Aktif Film</button>
-                            @endif
-                        </th>
-                    </tr>
+                        </form>
+                    </td>
                 </tr>
             @endforeach
         </table>

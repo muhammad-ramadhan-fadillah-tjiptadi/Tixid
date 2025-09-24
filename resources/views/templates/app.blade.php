@@ -58,6 +58,13 @@
                                 </li>
                             </ul>
                         </li>
+                    @elseif (Auth::check() && Auth::user()->role == 'staff')
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Jadwal Tiket</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Promo</a>
+                        </li>
                     @else
                         {{-- Jika bukan admin/belum login,munculin ini --}}
                         <li class="nav-item">

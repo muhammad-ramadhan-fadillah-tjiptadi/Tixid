@@ -88,13 +88,13 @@
             </div>
             {{-- Konten Kanan --}}
             <div>
-                <button class="btn btn-warning rounded-pill">Semua</button>
+                <a href="{{ route('home.movies.all') }}" class="btn btn-warning rounded-pill">Semua</a>
             </div>
         </div>
     </div>
     <div class="container d-flex gap-2">
         {{-- Gap - 2 Jarak Antar Komponen --}}
-        <button class="btn btn-outline-primary rounded-pill">Semua Film</button>
+        <a href="{{ route('home.movies.all')}}" class="btn btn-outline-primary rounded-pill">Semua Film</a>
         <button class="btn btn-outline-secondary rounded-pill">XXI</button>
         <button class="btn btn-outline-secondary rounded-pill">Cinepolis</button>
         <button class="btn btn-outline-secondary rounded-pill">Imax</button>

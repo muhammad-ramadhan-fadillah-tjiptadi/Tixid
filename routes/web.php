@@ -54,10 +54,14 @@ Route::middleware('isAdmin')->group(function () {
         });
 
         // Film
-        Route::prefix('/movies')->name('movies.')->group(function(){
+        Route::prefix('/movies')->name('movies.')->group(function () {
             Route::get('/', [MovieController::class, 'index'])->name('index');
             Route::get('/create', [MovieController::class, 'create'])->name('create');
             Route::post('/store', [MovieController::class, 'store'])->name('store');
+            Route::get('/edit/{id}', [MovieController::class, 'edit'])->name('edit');
+            Route::put('/update/{id}', [MovieController::class, 'update'])->name('update');
+            Route::delete('/delete/{id}', [MovieController::class, 'destroy'])->name('delete');
+            Route::patch('/patch/{id}', [MovieController::class, 'patch'])->name('patch');
         });
 
         // Users
@@ -67,10 +71,11 @@ Route::middleware('isAdmin')->group(function () {
             Route::post('/store', [UserController::class, 'store'])->name('store');
             Route::get('/edit/{id}', [UserController::class, 'edit'])->name('edit');
             Route::put('/update/{id}', [UserController::class, 'update'])->name('update');
-            Route::delete('/delete/{id}', [UserController::class, 'destroy'])->name('delete');
         });
     });
 });
+
+Route::get('/movies/active', [MovieController::class, 'homeMovies'])->name('home.movies.all');
 
 Route::middleware('isGuest')->group(function () {
     Route::get('/login', function () {
@@ -80,4 +85,12 @@ Route::middleware('isGuest')->group(function () {
     Route::get('/signup', function () {
         return view('auth.signup');
     })->name('signup');
+});
+
+Route::middleware('isStaff')->group(function () {
+    Route::prefix('/staff')->name('staff.')->group(function () {
+        Route::get('/dashboard', function () {
+            return view('staff.dashboard');
+        })->name('dashboard');
+    });
 });
