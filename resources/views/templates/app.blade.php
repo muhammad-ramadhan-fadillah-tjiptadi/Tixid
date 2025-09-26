@@ -15,7 +15,6 @@
 </head>
 
 <body>
-
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <!-- Container wrapper -->
@@ -63,7 +62,7 @@
                             <a class="nav-link" href="#">Jadwal Tiket</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Promo</a>
+                            <a class="nav-link" href="{{ route('staff.promos.index')}}">Promo</a>
                         </li>
                     @else
                         {{-- Jika bukan admin/belum login,munculin ini --}}
