@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Movie;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\MovieExport;
 
 class MovieController extends Controller
 {
@@ -199,5 +201,14 @@ class MovieController extends Controller
 
         return redirect()->route('admin.movies.index')
             ->with('success', "Film berhasil $status");
+    }
+
+    public function export()
+    {
+        // nama file yang akaan di download
+        $filename = "data.film.xlsx";
+        return Excel::download(new MovieExport(), $filename);
+        // proses download
+        return Excel::download(new MovieExport, $filename);
     }
 }

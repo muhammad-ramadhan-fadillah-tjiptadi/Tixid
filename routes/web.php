@@ -53,6 +53,7 @@ Route::middleware('isAdmin')->group(function () {
             Route::get('/edit/{id}', [CinemaController::class, 'edit'])->name('edit');
             Route::put('/update/{id}', [CinemaController::class, 'update'])->name('update');
             Route::delete('/delete/{id}', [CinemaController::class, 'destroy'])->name('delete');
+            Route::get('/export', [CinemaController::class, 'export'])->name('export');
         });
 
         // Film
@@ -64,6 +65,7 @@ Route::middleware('isAdmin')->group(function () {
             Route::put('/update/{id}', [MovieController::class, 'update'])->name('update');
             Route::delete('/delete/{id}', [MovieController::class, 'destroy'])->name('delete');
             Route::patch('/patch/{id}', [MovieController::class, 'patch'])->name('patch');
+            Route::get('/export', [MovieController::class, 'export'])->name('export');
         });
 
         // Users
