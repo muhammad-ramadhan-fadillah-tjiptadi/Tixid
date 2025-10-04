@@ -1,11 +1,12 @@
 @extends('templates.app')
 
 @section('content')
-    <div class="container mt-5">
+    <div class="container my-5">
         @if (Session::get('success'))
             <div class="alert alert-success">{{ Session::get('success') }}</div>
         @endif
         <div class="d-flex justify-content-end">
+            <a href="{{ route('staff.promos.export') }}" class="btn btn-secondary me-2 ">Export (.xlsx)</a>
             <a href="{{ route('staff.promos.create') }}" class="btn btn-success">Tambah Data</a>
         </div>
         <h5 class="mt-3">Data Promo</h5>

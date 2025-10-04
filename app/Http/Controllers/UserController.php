@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\UserExport;
 
 class UserController extends Controller
 {
@@ -173,5 +175,12 @@ class UserController extends Controller
     {
         User::where('id', $id)->delete();
         return redirect()->route('admin.users.index')->with('Success', 'Berhasil menghapus data!');
+    }
+
+    public function export()
+    {
+        // nama file yang akan di download
+        $filename = 'data-user.xlsx';
+        return Excel::download(new UserExport, $filename);
     }
 }

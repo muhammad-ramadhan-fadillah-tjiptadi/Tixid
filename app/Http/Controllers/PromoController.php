@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Promo;
+use App\Exports\PromoExport;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 
 class PromoController extends Controller
@@ -116,5 +118,14 @@ class PromoController extends Controller
         $promo = Promo::findOrFail($id);
         $promo->delete();
         return redirect()->route('staff.promos.index')->with('success', 'Data berhasil dihapus!');
+    }
+
+    /**
+     * Export promos to Excel
+     */
+    public function export()
+    {
+        $filename = 'data-promo.xlsx';
+        return Excel::download(new PromoExport, $filename);
     }
 }
