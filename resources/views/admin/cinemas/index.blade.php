@@ -8,11 +8,21 @@
         @if (Session::get('error'))
             <div class="alert alert-danger">{{ Session::get('error') }}</div>
         @endif
-        <div class="d-flex justify-content-end">
-            <a href="{{ route('admin.cinemas.export') }}" class="btn btn-secondary me-2">Export (.xlsx)</a>
-            <a href="{{ route('admin.cinemas.create')}}" class="btn btn-success">Tambah Data</a>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3>Data Bioskop</h3>
+            <div>
+                <a href="{{ route('admin.cinemas.export') }}" class="btn btn-success me-2">
+                    <i class="fas fa-file-excel me-1"></i> Export Excel
+                </a>
+                <a href="{{ route('admin.cinemas.trash') }}" class="btn btn-secondary me-2">
+                    <i class="fas fa-trash me-1"></i> Data Sampah
+                </a>
+                <a href="{{ route('admin.cinemas.create') }}" class="btn btn-primary me-2">
+                    <i class="fas fa-plus me-1"></i> Tambah Data
+                </a>
+            </div>
         </div>
-        <h5 class="mt-3">Data Bioskop</h5>
+        {{-- <h5 class="mt-3">Data Bioskop</h5> --}}
         <table class="table table-bordered">
             <tr>
                 <th>No</th>
@@ -30,7 +40,8 @@
                     <th>{{ $item['location'] }}</th>
                     <th class="d-flex">
                         {{-- ['id' => $item['id']] : mengirimkan $item['id'] ke route {'id'} --}}
-                        <a href="{{ route('admin.cinemas.edit', ['id' => $item['id']])}}" class="btn btn-secondary">Edit</a>
+                        <a href="{{ route('admin.cinemas.edit', ['id' => $item['id']]) }}"
+                            class="btn btn-secondary">Edit</a>
                         <form action="{{ route('admin.cinemas.delete', ['id' => $item['id']]) }}" method="POST">
                             @csrf
                             @method('DELETE')

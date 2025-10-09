@@ -163,6 +163,6 @@ class ScheduleController extends Controller
 
     public function export()
     {
-        return Excel::download(new ScheduleExport, 'jadwal-tayang-' . date('Y-m-d') . '.xlsx');
+        return Excel::download(new ScheduleExport, 'data-jadwal-tayang.xlsx');
     }
 }

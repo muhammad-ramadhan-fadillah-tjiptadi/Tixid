@@ -6,6 +6,7 @@ use App\Http\Controllers\CinemaController;
 use App\Http\Controllers\MovieController;
 use App\Http\Controllers\PromoController;
 use App\Http\Controllers\ScheduleController;
+use App\Models\Cinema;
 use App\Models\Movie;
 
 Route::get('/', [MovieController::class, 'home'])->name('home');
@@ -51,6 +52,9 @@ Route::middleware('isAdmin')->group(function () {
             Route::put('/update/{id}', [CinemaController::class, 'update'])->name('update');
             Route::delete('/delete/{id}', [CinemaController::class, 'destroy'])->name('delete');
             Route::get('/export', [CinemaController::class, 'export'])->name('export');
+            Route::get('trash', [CinemaController::class, 'trash'])->name('trash');
+            Route::patch('/restore/{id}', [CinemaController::class, 'restore'])->name('restore');
+            Route::delete('/delete-permanent/{id}', [CinemaController::class, 'deletePermanent'])->name('delete-permanent');
         });
 
         // Film

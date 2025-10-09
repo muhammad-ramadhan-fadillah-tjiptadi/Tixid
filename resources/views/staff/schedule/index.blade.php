@@ -16,7 +16,6 @@
                 </button>
             </div>
         </div>
-        <h3 class="my-3">Data Jadwal Tayang</h3>
         @if (Session::get('success'))
             <div class="alert alert-success">
                 {{ Session::get('success') }}
