@@ -182,7 +182,7 @@ class MovieController extends Controller
         }
     }
 
-    /** 
+    /**
      * Remove the specified resource from storage.
      */
     public function destroy(Movie $movie, $id)
@@ -227,5 +227,27 @@ class MovieController extends Controller
         return Excel::download(new MovieExport(), $filename);
         // proses download
         return Excel::download(new MovieExport, $filename);
+    }
+
+    public function trash()
+    {
+        $movieTrash = Movie::onlyTrashed('id', 'poster', 'title', 'activated')->get();
+        return view('admin.movie.trash', compact('movieTrash'));
+    }
+
+    public function restore($id)
+    {
+        $movie= Movie::onlyTrashed()->find($id);
+        // restore() -> mengembalikan data yang sudah dihapus
+        $movie->restore();
+        return redirect()->route('admin.movies.index')->with('success', 'Berhasil mengembalikan data!');
+    }
+
+    public function deletePermanent($id)
+    {
+        $movie = Movie::onlyTrashed()->find($id);
+        // forceDelete() = menghapus data secara permanen, data hilang bahkan dari db nya
+        $movie->forceDelete();
+        return redirect()->back()->with('success', 'Berhasil menghapus data!');
     }
 }

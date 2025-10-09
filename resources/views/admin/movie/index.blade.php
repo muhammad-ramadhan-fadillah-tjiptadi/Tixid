@@ -10,11 +10,21 @@
         @if (Session::get('error'))
             <div class="alert alert-danger">{{ Session::get('error') }}</div>
         @endif
-        <div class="d-flex justify-content-end">
-            <a href="{{ route('admin.movies.export') }}" class="btn btn-secondary me-2">Export (.xlsx)</a>
-            <a href="{{ route('admin.movies.create') }}" class="btn btn-success">Tambah Data</a>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3>Data Film</h3>
+            <div>
+                <a href="{{ route('admin.movies.export') }}" class="btn btn-success me-2">
+                    <i class="fas fa-file-excel me-1"></i> Export Excel
+                </a>
+                <a href="{{ route('admin.movies.trash') }}" class="btn btn-secondary me-2">
+                    <i class="fas fa-trash me-1"></i> Data Sampah
+                </a>
+                <a href="{{ route('admin.movies.create') }}" class="btn btn-primary me-2">
+                    <i class="fas fa-plus me-1"></i> Tambah Data
+                </a>
+            </div>
         </div>
-        <h5 class="mb-3">Data Film</h5>
+        {{-- <h5 class="mb-3">Data Film</h5> --}}
         <table class="table table-bordered">
             <tr>
                 <th>No</th>

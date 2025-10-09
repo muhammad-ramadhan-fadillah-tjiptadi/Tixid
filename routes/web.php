@@ -67,6 +67,9 @@ Route::middleware('isAdmin')->group(function () {
             Route::delete('/delete/{id}', [MovieController::class, 'destroy'])->name('delete');
             Route::patch('/patch/{id}', [MovieController::class, 'patch'])->name('patch');
             Route::get('/export', [MovieController::class, 'export'])->name('export');
+            Route::get('/trash', [MovieController::class, 'trash'])->name('trash');
+            Route::patch('/restore/{id}', [MovieController::class, 'restore'])->name('restore');
+            Route::delete('/delete-permanent/{id}', [MovieController::class, 'deletePermanent'])->name('delete-permanent');
         });
 
         // Users
@@ -78,6 +81,9 @@ Route::middleware('isAdmin')->group(function () {
             Route::put('/update/{id}', [UserController::class, 'update'])->name('update');
             Route::delete('/delete/{id}', [UserController::class, 'destroy'])->name('delete');
             Route::get('/export', [UserController::class, 'export'])->name('export');
+            Route::get('/trash', [UserController::class, 'trash'])->name('trash');
+            Route::patch('/restore/{id}', [UserController::class, 'restore'])->name('restore');
+            Route::delete('/delete-permanent/{id}', [UserController::class, 'deletePermanent'])->name('delete-permanent');
         });
     });
 });

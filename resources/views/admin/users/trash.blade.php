@@ -5,7 +5,7 @@
         <div class="d-flex justify-content-end">
             <a href="{{ route('admin.movies.index') }}" class="btn btn-secondary">Kembali</a>
         </div>
-        <h3 class="my-3">Data Sampah Bioskop</h3>
+        <h3 class="my-3">Data Sampah Petugas</h3>
         @if (Session::get('success'))
             <div class="alert alert-success">
                 {{ Session::get('success') }}
