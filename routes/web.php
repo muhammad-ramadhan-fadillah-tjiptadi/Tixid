@@ -5,15 +5,12 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\CinemaController;
 use App\Http\Controllers\MovieController;
 use App\Http\Controllers\PromoController;
-
+use App\Http\Controllers\ScheduleController;
+use App\Models\Movie;
 
 Route::get('/', [MovieController::class, 'home'])->name('home');
 
-Route::get('/schedules/detail', function () {
-    //standar penulisan :
-    // path (mengacu ke data/fitur) gunakan jamak, folder view fitur gunakan tunggal
-    return view('schedule.detail');
-})->name('schedules.detail');
+Route::get('/schedules/detail/{movie_id}', [MovieController::class, 'movieSchedule'])->name('movieSchedule');
 
 // Login routes
 Route::get('/login', function () {
@@ -108,6 +105,19 @@ Route::middleware('isStaff')->group(function () {
             Route::put('/update/{id}', [PromoController::class, 'update'])->name('update');
             Route::delete('/delete/{id}', [PromoController::class, 'destroy'])->name('delete');
             Route::get('/export', [PromoController::class, 'export'])->name('export');
+        });
+
+        // Jadwal Tayang/Schedules
+        Route::prefix('schedules')->name('schedules.')->group(function () {
+            Route::get('/', [ScheduleController::class, 'index'])->name('index');
+            Route::post('/store', [ScheduleController::class, 'store'])->name('store');
+            Route::get('/edit/{id}', [ScheduleController::class, 'edit'])->name('edit');
+            Route::patch('/update/{id}', [ScheduleController::class, 'update'])->name('update');
+            Route::delete('/delete/{id}', [ScheduleController::class, 'destroy'])->name('delete');
+            Route::get('trash', [ScheduleController::class, 'trash'])->name('trash');
+            Route::patch('/restore/{id}', [ScheduleController::class, 'restore'])->name('restore');
+            Route::delete('/delete-permanent/{id}', [ScheduleController::class, 'deletePermanent'])->name('delete-permanent');
+            Route::get('export', [ScheduleController::class, 'export'])->name('export');
         });
     });
 });

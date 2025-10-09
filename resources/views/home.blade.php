@@ -107,7 +107,7 @@
                 <div class="card-body bg-warning" style="padding: 0 !important; text-align: center;">
                     {{-- Karna default card text ad paddingnya, biar paddingnya yang dibaca dari style jadi dikasi !important (memprioritaskan style) --}}
                     <p class="card-text" style="padding: 0 !important; text-align: center; font-weight: bold;"><a
-                            href="{{ route('schedules.detail') }}">BELI TIKET</a></p>
+                            href="{{ route('movieSchedule', $item['id']) }}">BELI TIKET</a></p>
                 </div>
             </div>
         @endforeach

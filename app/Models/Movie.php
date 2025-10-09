@@ -20,4 +20,8 @@ class Movie extends Model
         'description',
         'activated',
     ];
+
+    public function schedules() {
+        return $this->hasMany(Schedule::class);
+    }
 }

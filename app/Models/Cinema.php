@@ -15,4 +15,13 @@ class Cinema extends Model
         'name',
         'location',
     ];
+
+    // karena cinema pegang posisi pertama (one to many: cinema dan schedules)
+    // mendaftarkan jenis relasinya
+    // nama relasi tunggal/jamak tergantung jenis, shcedules (many) jamak
+    public function schedules() {
+        // one to one: hasOne
+        // one to many : hasMany
+        return $this->hasMany(Schedule::class);
+    }
 }

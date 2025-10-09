@@ -16,4 +16,23 @@ class Schedule extends Model
         'hours',
         'price',
     ];
+
+    // casts : memastikan format data
+    protected function casts() : array
+    {
+        return [
+            // mengubah format json migration hour jadi array
+            'hours' => 'array'
+        ];
+    }
+
+    // schedule pegang posisi kedua, panggil relasi dengan belongsTo
+    // cinema pegang posisi pertamaa dan jenis (one) jadi gunakan tuggal
+    public function cinema() {
+        return $this->belongsTo(Cinema::class);
+    }
+
+    public function movie() {
+        return $this->belongsTo(Movie::class);
+    }
 }

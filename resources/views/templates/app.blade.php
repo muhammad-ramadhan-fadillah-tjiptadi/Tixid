@@ -59,7 +59,7 @@
                         </li>
                     @elseif (Auth::check() && Auth::user()->role == 'staff')
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Jadwal Tiket</a>
+                            <a class="nav-link" href="{{ route('staff.schedules.index') }}">Jadwal Tiket</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('staff.promos.index')}}">Promo</a>

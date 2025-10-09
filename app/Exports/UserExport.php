@@ -31,7 +31,7 @@ class UserExport implements FromCollection, WithHeadings, WithMapping
             $user->name,
             $user->email,
             $user->role,
-            Carbon::parse($user->created_at)->format('d-m-Y H:i:s')
+            Carbon::parse($user->created_at)->format('d-m-Y')
         ];
     }
 }

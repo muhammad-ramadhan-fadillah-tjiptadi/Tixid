@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Movie;
+use App\Models\Schedule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
@@ -35,6 +36,17 @@ class MovieController extends Controller
     {
         $movies = Movie::where('activated', 1)->orderBy('created_at', 'DESC')->get();
         return view('movies', compact('movies'));
+    }
+
+    public function movieSchedule($movie_id)
+    {
+        // ambil data movie bersama schedule dan cinema
+        // karna cinema adanya relasi dengan schedule bukan movie, jadi gunakan schedule.cinema
+        $movie = Movie::where('id', $movie_id)->with('schedules', 'schedules.cinema')->first();
+        // schedules: mengambil relasi schedules
+        // schedules.cinema: ambil relasi cinema dari schedules
+        // first () : karna mau ambil 1 film
+        return view('schedule.detail', compact('movie'));
     }
 
     /**
@@ -170,11 +182,16 @@ class MovieController extends Controller
         }
     }
 
-    /**
+    /** 
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(Movie $movie, $id)
     {
+        $schedules = Schedule::where('movie_id', $id)->count();
+        if ($schedules) {
+            return redirect()->route('admin.movies.index')->with('error', 'Gagal! tidak dapat menghapus data bioskop! Data tertaut dengan jadwal tayang');
+        }
+
         $movie = Movie::findOrFail($id);
 
         // Delete the poster file from storage
