@@ -8,6 +8,7 @@ use App\Http\Controllers\PromoController;
 use App\Http\Controllers\ScheduleController;
 use App\Models\Cinema;
 use App\Models\Movie;
+use App\Models\Promo;
 
 Route::get('/', [MovieController::class, 'home'])->name('home');
 
@@ -115,6 +116,9 @@ Route::middleware('isStaff')->group(function () {
             Route::put('/update/{id}', [PromoController::class, 'update'])->name('update');
             Route::delete('/delete/{id}', [PromoController::class, 'destroy'])->name('delete');
             Route::get('/export', [PromoController::class, 'export'])->name('export');
+            Route::get('/trash', [PromoController::class, 'trash'])->name('trash');
+            Route::patch('/restore/{id}', [PromoController::class, 'restore'])->name('restore');
+            Route::delete('/delete-permanent/{id}', [PromoController::class, 'deletePermanent'])->name('delete-permanent');
         });
 
         // Jadwal Tayang/Schedules
