@@ -5,11 +5,21 @@
         @if (Session::get('success'))
             <div class="alert alert-success">{{ Session::get('success') }}</div>
         @endif
-        <div class="d-flex justify-content-end">
-            <a href="{{ route('admin.users.export') }}" class="btn btn-secondary me-2">Export (.xlsx)</a>
-            <a href="{{ route('admin.users.create') }}" class="btn btn-success">Tambah Data</a>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3>Data Pengguna (Admin & Staff)</h3>
+            <div>
+                <a href="{{ route('admin.users.export') }}" class="btn btn-success me-2">
+                    <i class="fas fa-file-excel me-1"></i> Export Excel
+                </a>
+                <a href="{{ route('admin.users.trash') }}" class="btn btn-secondary me-2">
+                    <i class="fas fa-trash me-1"></i> Data Sampah
+                </a>
+                <a href="{{ route('admin.users.create') }}" class="btn btn-primary me-2">
+                    <i class="fas fa-plus me-1"></i> Tambah Data
+                </a>
+            </div>
         </div>
-        <h5 class="mt-3">Data Pengguna (Admin & Staff)</h5>
+        {{-- <h5 class="mt-3">Data Pengguna (Admin & Staff)</h5> --}}
         <table class="table table-bordered">
             <tr>
                 <th>No</th>

@@ -173,8 +173,11 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        User::where('id', $id)->delete();
-        return redirect()->route('admin.users.index')->with('Success', 'Berhasil menghapus data!');
+        $user = User::findOrFail($id);
+        if ($user->delete()) {
+            return redirect()->route('admin.users.index')->with('success', 'Berhasil Menghapus Data!');
+        }
+        return redirect()->back()->with('error', 'Gagal menghapus data. Silakan coba lagi.');
     }
 
     public function export()
@@ -182,5 +185,27 @@ class UserController extends Controller
         // nama file yang akan di download
         $filename = 'data-user.xlsx';
         return Excel::download(new UserExport, $filename);
+    }
+
+    public function trash()
+    {
+        $userTrash = User::onlyTrashed('id', 'name', 'email', 'role')->get();
+        return view('admin.users.trash', compact('userTrash'));
+    }
+
+    public function restore($id)
+    {
+        $user= User::onlyTrashed()->find($id);
+        // restore() -> mengembalikan data yang sudah dihapus
+        $user->restore();
+        return redirect()->route('admin.users.index')->with('success', 'Berhasil mengembalikan data!');
+    }
+
+    public function deletePermanent($id)
+    {
+        $user = User::onlyTrashed()->find($id);
+        // forceDelete() = menghapus data secara permanen, data hilang bahkan dari db nya
+        $user->forceDelete();
+        return redirect()->back()->with('success', 'Berhasil menghapus data!');
     }
 }
