@@ -194,13 +194,8 @@ class MovieController extends Controller
 
         $movie = Movie::findOrFail($id);
 
-        // Delete the poster file from storage
-        $filePath = storage_path('app/public/' . $movie->poster);
-        if (file_exists($filePath)) {
-            unlink($filePath);
-        }
-
-        // Delete the movie record
+        // Soft delete - jangan hapus file poster, biarkan tetap ada untuk data sampah
+        // File poster akan dihapus saat deletePermanent dipanggil
         $movie->delete();
 
         return redirect()->route('admin.movies.index')
@@ -225,13 +220,11 @@ class MovieController extends Controller
         // nama file yang akaan di download
         $filename = "data.film.xlsx";
         return Excel::download(new MovieExport(), $filename);
-        // proses download
-        return Excel::download(new MovieExport, $filename);
     }
 
     public function trash()
     {
-        $movieTrash = Movie::onlyTrashed('id', 'poster', 'title', 'activated')->get();
+        $movieTrash = Movie::onlyTrashed()->get();
         return view('admin.movie.trash', compact('movieTrash'));
     }
 
@@ -246,8 +239,20 @@ class MovieController extends Controller
     public function deletePermanent($id)
     {
         $movie = Movie::onlyTrashed()->find($id);
-        // forceDelete() = menghapus data secara permanen, data hilang bahkan dari db nya
-        $movie->forceDelete();
-        return redirect()->back()->with('success', 'Berhasil menghapus data!');
+        
+        if ($movie) {
+            // Hapus file poster dari storage
+            $filePath = storage_path('app/public/' . $movie->poster);
+            if (file_exists($filePath)) {
+                unlink($filePath);
+            }
+            
+            // forceDelete() = menghapus data secara permanen, data hilang bahkan dari db nya
+            $movie->forceDelete();
+            
+            return redirect()->back()->with('success', 'Berhasil menghapus data secara permanen!');
+        }
+        
+        return redirect()->back()->with('error', 'Data tidak ditemukan!');
     }
 }

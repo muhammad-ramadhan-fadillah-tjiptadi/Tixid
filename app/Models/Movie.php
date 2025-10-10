@@ -21,7 +21,8 @@ class Movie extends Model
         'activated',
     ];
 
-    public function schedules() {
+    public function schedules()
+    {
         return $this->hasMany(Schedule::class);
     }
 }

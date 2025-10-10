@@ -3,7 +3,7 @@
 @section('content')
     <div class="container my-5">
         <div class="d-flex justify-content-end">
-            <a href="{{ route('admin.movies.index') }}" class="btn btn-secondary">Kembali</a>
+            <a href="{{ route('admin.cinemas.index') }}" class="btn btn-secondary">Kembali</a>
         </div>
         <h3 class="my-3">Data Sampah Bioskop</h3>
         @if (Session::get('success'))
@@ -21,7 +21,6 @@
             @foreach ($cinemaTrash as $key => $cinema)
                 <tr>
                     <td>{{ $key + 1 }}</td>
-                    {{-- memunculkan detail relasi : $item['namarelasi']['data'] --}}
                     <td>{{ $cinema['name'] ?? '-'}}</td>
                     <td>{{ $cinema['location'] ?? '-'}}</td>
                     <td class="d-flex">

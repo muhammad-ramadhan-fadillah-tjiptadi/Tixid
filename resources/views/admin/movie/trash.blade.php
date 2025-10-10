@@ -22,9 +22,21 @@
                 <tr>
                     <td>{{ $key + 1 }}</td>
                     {{-- memunculkan detail relasi : $item['namarelasi']['data'] --}}
-                    <td>{{ $movie['poster'] ?? '-'}}</td>
-                    <td>{{ $movie['title'] ?? '-'}}</td>
-                    <td>{{ $movie['activated'] ?? '-'}}</td>
+                    <td>
+                        @if ($movie->poster)
+                            <img src="{{ asset('storage/' . $movie->poster) }}" width="120" class="img-fluid">
+                        @else
+                            -
+                        @endif
+                    </td>
+                    <td>{{ $movie['title'] ?? '-' }}</td>
+                    <td>
+                        @if ($movie->activated == 1)
+                            <span class="badge bg-success">Aktif</span>
+                        @else
+                            <span class="badge bg-danger">Non-Aktif</span>
+                        @endif
+                    </td>
                     <td class="d-flex">
                         <form action="{{ route('admin.movies.restore', $movie->id) }}" method="POST">
                             @csrf
