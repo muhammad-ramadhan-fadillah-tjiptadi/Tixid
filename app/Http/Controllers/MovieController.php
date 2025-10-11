@@ -32,9 +32,18 @@ class MovieController extends Controller
         return view('home', compact('movies'));
     }
 
-    public function homeMovies()
+    public function homeMovies(Request $request)
     {
-        $movies = Movie::where('activated', 1)->orderBy('created_at', 'DESC')->get();
+        // ambil $request dari input search
+        $nameMovie = $request->search_movie;
+        // cek jika input name = "search_movie" tidak kosong
+        if ($nameMovie != "") {
+            // LIKE : mencari data yang mengandung teks tertentu
+            // % didepan : mencari kata belakang % dibelakang : mencari data didepan, % depan belakang : mencari di depan tengah belakang
+            $movies = Movie::where('title', 'LIKE', '%'.$nameMovie.'%')->where('activated', 1)->orderBy('created_at', 'DESC')->get();
+        }   else {
+            $movies = Movie::where('activated', 1)->orderBy('created_at', 'DESC')->get();
+        }
         return view('movies', compact('movies'));
     }
 
@@ -239,20 +248,20 @@ class MovieController extends Controller
     public function deletePermanent($id)
     {
         $movie = Movie::onlyTrashed()->find($id);
-        
+
         if ($movie) {
             // Hapus file poster dari storage
             $filePath = storage_path('app/public/' . $movie->poster);
             if (file_exists($filePath)) {
                 unlink($filePath);
             }
-            
+
             // forceDelete() = menghapus data secara permanen, data hilang bahkan dari db nya
             $movie->forceDelete();
-            
+
             return redirect()->back()->with('success', 'Berhasil menghapus data secara permanen!');
         }
-        
+
         return redirect()->back()->with('error', 'Data tidak ditemukan!');
     }
 }
