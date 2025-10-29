@@ -6,6 +6,8 @@ use App\Models\Movie;
 use App\Models\Schedule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use League\CommonMark\Extension\DescriptionList\Node\Description;
+use Storage;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\MovieExport;
 
@@ -16,16 +18,16 @@ class MovieController extends Controller
      */
     public function index()
     {
-        // all : ambil data tanpa filter
         $movies = Movie::all();
         return view('admin.movie.index', compact('movies'));
     }
 
     public function home()
     {
-        // where('field', 'operator', 'value') : mencari data
+        // where ('field', 'operator', 'value') : mencari data
         // operator : = / < / <= / > / >= / <> / !=
-        // ASC : a-z, 0-9, terlama-terbaru, DESC : 9-0, z-a, terbaru ke terlama
+        // orderBy('field', 'ASC/DESC') : : mengurutkan data
+        // ASC : a-z, 0-9 terlama-terbaru, DESC : 9-0, z-a, tebaru-terlama
         // limit(angka) : mengambil hanya beberapa data
         // get() : ambil hasil proses filter
         $movies = Movie::where('activated', 1)->orderBy('created_at', 'DESC')->limit(3)->get();
@@ -34,28 +36,62 @@ class MovieController extends Controller
 
     public function homeMovies(Request $request)
     {
-        // ambil $request dari input search
+        // ambil $request input search
         $nameMovie = $request->search_movie;
-        // cek jika input name = "search_movie" tidak kosong
+        // cek jika input name="search_movie" tidak kosong
         if ($nameMovie != "") {
-            // LIKE : mencari data yang mengandung teks tertentu
-            // % didepan : mencari kata belakang % dibelakang : mencari data didepan, % depan belakang : mencari di depan tengah belakang
-            $movies = Movie::where('title', 'LIKE', '%'.$nameMovie.'%')->where('activated', 1)->orderBy('created_at', 'DESC')->get();
-        }   else {
+            // LIKE : mencari kata yang mengandung teks tertentu
+            // % didepan : mencari kata belakang, % di belakang : mencari data di depan, % depan belakang : mencari di depan tengah belakang
+            $movies = Movie::where('title', 'LIKE', '%' . $nameMovie . '%')->where('activated', 1)->orderBy('created_at', 'DESC')->get();
+        } else {
             $movies = Movie::where('activated', 1)->orderBy('created_at', 'DESC')->get();
         }
+        $movies = Movie::where('activated', 1)->orderBy('created_at', 'DESC')->get();
         return view('movies', compact('movies'));
     }
 
-    public function movieSchedule($movie_id)
+    public function movieSchedule($movie_id, Request $request)
     {
-        // ambil data movie bersama schedule dan cinema
-        // karna cinema adanya relasi dengan schedule bukan movie, jadi gunakan schedule.cinema
-        $movie = Movie::where('id', $movie_id)->with('schedules', 'schedules.cinema')->first();
-        // schedules: mengambil relasi schedules
-        // schedules.cinema: ambil relasi cinema dari schedules
-        // first () : karna mau ambil 1 film
-        return view('schedule.detail', compact('movie'));
+        $sortPrice = $request->sort_price ?: 'ASC';
+
+        if ($sortPrice) {
+            $movie = Movie::where('id', $movie_id)->with(['schedules' => function ($q)
+            use ($sortPrice) {
+                // karna mau ngurutkan berdasar price di table schedules. schedule itu ada di relasi jd gunakan fungsi anonim
+                // $q : query eloquent, mewakili model relasi (model schedule)
+                $q->orderBy('price', $sortPrice);
+            }, 'schedules.cinema'])->first();
+        } else {
+            $movie = Movie::where('id', $movie_id)->with(['schedules', 'schedules.cinema'])->first();
+        }
+
+        $sortAlfabet = $request->sort_alfabet;
+        if ($sortAlfabet == 'ASC') {
+            $movie->schedules = $movie->schedules->sortBy(function ($schedule) {
+                return $schedule->cinema->name;
+            })->values();
+        } elseif ($sortAlfabet == 'DESC') {
+            $movie->schedules = $movie->schedules->sortByDesc(function ($schedule) {
+                return $schedule->cinema->name;
+            })->values();
+        }
+        // ambil data movie bersama schedule  dan cinema
+        // karn cinema adanya relasi dengan schedule bukan movie, jd gunakan schedule.cinema
+        // schedules : mengambil relasi schedules
+        // schedules.cinema : ambil relasi cinema dari schedule
+        // first() : karna mau ambil 1 film
+        return view('schedule.detail', compact('movie', 'sortPrice'));
+    }
+
+    public function nonActive($id)
+    {
+        $movies = Movie::findOrFail($id);
+        $nonAktifData = $movies->update(['activated' => 0]);
+        if ($nonAktifData) {
+            return redirect()->route('admin.movies.index')->with('success', 'Berhasil menambahkan data!');
+        } else {
+            return redirect()->back()->with('error', 'Gagal! Silahkan voba lagi.');
+        }
     }
 
     /**
@@ -78,43 +114,43 @@ class MovieController extends Controller
             'genre' => 'required',
             'director' => 'required',
             'age_rating' => 'required',
+            //mimes : Memastikan ekstensi (jenis file) yg di upload
+            'poster' => 'required|mimes:jpg,jpeg,png,svg,webp',
             'description' => 'required|min:10',
-            // mimes : memastikan ekstensi (jenis file) yang diupload
-            'poster' => 'required|mimes:jpeg,png,jpg,svg,webp',
         ], [
-            'title.required' => 'Judul film wajib diisi',
-            'duration.required' => 'Durasi film wajib diisi',
-            'genre.required' => 'Genre film wajib diisi',
-            'director.required' => 'Sutradara film wajib diisi',
-            'age_rating.required' => 'Usia minimal film wajib diisi',
-            'description.required' => 'Sinopsis film wajib diisi',
-            'description.min' => 'Sinopsis film minimal 10 karakter',
-            'poster.required' => 'Poster film wajib diisi',
-            'poster.mimes' => 'Poster film harus berekstensi jpeg, png, jpg, svg, atau webp',
+            'title.required' => 'Judul film harus di isi',
+            'duration.required' => 'Durasi film harus di isi',
+            'genre.required' => 'Genre film harus di isi',
+            'director.required' => 'Sutradara film harus di isi',
+            'age_rating.required' => 'Usia minimal haus di isi',
+            'poster.required' => 'Poster film harus di isi',
+            'poster.mimes' => 'Poster harus berupa jpg/jpeg/png/svg/webp',
+            'description.required' => 'Sinopsis film harus di isi',
+            'description.min' => 'Sinopsi harus di isi minimal 10 karakter'
         ]);
-        //  ambil file dari input : $request->file('name_input')
+        //ambil file nya
         $poster = $request->file('poster');
-        // buat namaa baru untuk filenya
-        // format file yang diharapkan : <acak>-poser.jpg
-        // getClientOriginalExtension() : mengambil eksternal file yang diupload
-        $namafile = Str::random(10) . "-poster." . $poster->getClientOriginalExtension();
-        // simpan file ke folder storage : storeAs("namasubfolder", "namafile", visibility)
-        $path = $poster->storeAs("poster", $namafile, "public");
+        // baut nama nari untuk file nya
+        // formas file baru yang di harapkan acak : <acak>-poster.jpg
+        // getClientOriginalExtension() : mengambil ekstensi file yang di upload
+        $namaFile = Str::random(10) . "-poster." . $poster->getClientOriginalExtension();
+        //simpan file ke folder storage : store AS("namasubfolder", namafile, "visibility")
+        $path = $poster->storeAs("poster", $namaFile, "public");
         $createData = Movie::create([
             'title' => $request->title,
             'duration' => $request->duration,
             'genre' => $request->genre,
             'director' => $request->director,
             'age_rating' => $request->age_rating,
-            'description' => $request->description,
-            // poster diisi dengan hasil storeAs(), hasil penyimpanan file di storage sebelumnya
+            //poster di isi dengan hasil storeAS hasil penyimpanan file di storage sebelumnya
             'poster' => $path,
+            'description' => $request->description,
             'activated' => 1
         ]);
         if ($createData) {
-            return redirect()->route('admin.movies.index')->with('success', 'Berhasil membuat data baru!');
+            return redirect()->route('admin.movies.index')->with('success', 'Berhasil menambahkan data!');
         } else {
-            return redirect()->back()->with('error', 'Gagal, silakan coba lagi');
+            return redirect()->back()->with('error', 'Gagal! Silahkan voba lagi.');
         }
     }
 
@@ -146,122 +182,102 @@ class MovieController extends Controller
             'genre' => 'required',
             'director' => 'required',
             'age_rating' => 'required',
-            'description' => 'required',
-            'poster' => 'mimes:jpg,jpeg,png,svg,webp'
+            'description' => 'required|min:10',
+            'poster' => 'mimes:jpg,jpeg,png,svg,webp',
         ], [
-            'title.required' => 'Judul film wajib diisi',
-            'duration.required' => 'Durasi film wajib diisi',
-            'genre.required' => 'Genre film wajib diisi',
-            'director.required' => 'Sutradara film wajib diisi',
-            'age_rating.required' => 'Usia minimal film wajib diisi',
-            'description.required' => 'Sinopsis film wajib diisi',
-            'description.min' => 'Sinopsis harus diisi minimal 10 karakter',
-            'poster.mimes' => 'Poster harus berupa jpg, jpeg, png, svg, atau webp'
+            'title.required' => 'Judul film harus di isi',
+            'duration.required' => 'Durasi film harus di isi',
+            'genre.required' => 'Genre film harus di isi',
+            'director.required' => 'Sutradara film harus di isi',
+            'age_rating.required' => 'Usia minimal haus di isi',
+            'poster.mimes' => 'Poster harus berupa jpg/jpeg/png/svg/webp',
+            'description.required' => 'Sinopsis film harus di isi',
+            'description.min' => 'Sinopsi harus di isi minimal 10 karakter'
         ]);
-        // ambil data sebelumnya
+        //ambil data sebelummya
         $movie = Movie::find($id);
-        // jika input file poster disini
+
+        //jika input file poster di isi
         if ($request->hasFile('poster')) {
-            $filePath = storage_path('app/public/' . $movie->poster);
-            // jika file ada di storage path tersebut
-            if (file_exists($filePath)) {
-                // hapus file lama
+            $filePath = storage_path('app.public/' . $movie->poster);
+            //jika file ada di storage path
+            if (file_exists('poster')) {
+                //hapus file lama
                 unlink($filePath);
             }
             $file = $request->file('poster');
-            // buat nama baru untuk file
-            $filename = 'poster-' . Str::random(10) . '.' . $file->getClientOriginalExtension();
-            $path = $file->storeAs("poster", $filename, "public");
-            $movie->poster = $path;
+            $fileName = 'poster-' . Str::random(10) . '.' .
+                $file->getClientOriginalExtension();
+            $path = $file->storeAs('poster', $fileName, 'public');
         }
+
         $updateData = $movie->update([
             'title' => $request->title,
             'duration' => $request->duration,
             'genre' => $request->genre,
             'director' => $request->director,
             'age_rating' => $request->age_rating,
-            'description' => $request->description,
             'poster' => $request->hasFile('poster') ? $path : $movie->poster,
+            'description' => $request->description,
             'activated' => 1
         ]);
+
         if ($updateData) {
-            return redirect()->route('admin.movies.index')->with('success', 'Berhasil mengubah data!');
+            return redirect()->route('admin.movies.index')->with('success', 'Berhasil memperbarui data!');
         } else {
-            return redirect()->back()->with('error', 'Gagal, silakan coba lagi');
+            return redirect()->back()->with('error', 'Gagal, silahkan coba lagi.');
         }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Movie $movie, $id)
+    public function destroy($id)
     {
-        $schedules = Schedule::where('movie_id', $id)->count();
-        if ($schedules) {
-            return redirect()->route('admin.movies.index')->with('error', 'Gagal! tidak dapat menghapus data bioskop! Data tertaut dengan jadwal tayang');
-        }
-
         $movie = Movie::findOrFail($id);
 
-        // Soft delete - jangan hapus file poster, biarkan tetap ada untuk data sampah
-        // File poster akan dihapus saat deletePermanent dipanggil
+        // Hapus sementara (soft delete), file tidak dihapus
         $movie->delete();
 
-        return redirect()->route('admin.movies.index')
-            ->with('success', 'Berhasil menghapus data!');
+        return redirect()->route('admin.movies.index')->with('success', 'Film dihapus sementara!');
     }
 
-    public function patch($id)
-    {
-        $movie = Movie::findOrFail($id);
-
-        // Toggle activation status
-        $movie->update(['activated' => $movie->activated ? 0 : 1]);
-
-        $status = $movie->activated ? 'diaktifkan' : 'dinonaktifkan';
-
-        return redirect()->route('admin.movies.index')
-            ->with('success', "Film berhasil $status");
-    }
 
     public function export()
     {
-        // nama file yang akaan di download
-        $filename = "data.film.xlsx";
-        return Excel::download(new MovieExport(), $filename);
+        // name file yg akan di download
+        // ekstensi antara xlsx/csv
+        $fileName = "data-film.xlsx";
+        // proses download
+        return Excel::download(new MovieExport(), $fileName);
     }
 
     public function trash()
     {
+        // onlytrashed() -> filter data yang sudah di hapus, delete_at BUKAN NULL
         $movieTrash = Movie::onlyTrashed()->get();
         return view('admin.movie.trash', compact('movieTrash'));
     }
 
     public function restore($id)
     {
-        $movie= Movie::onlyTrashed()->find($id);
-        // restore() -> mengembalikan data yang sudah dihapus
+        // restore()-> mengembalikan data yang sudah di hapus (menghapus nilai tanggal pada delete_at)
+        $movie = Movie::onlyTrashed()->find($id);
         $movie->restore();
-        return redirect()->route('admin.movies.index')->with('success', 'Berhasil mengembalikan data!');
+        return redirect()->route('admin.movies.index')->with('success', 'Berhasil mengambil data!');
     }
 
     public function deletePermanent($id)
     {
-        $movie = Movie::onlyTrashed()->find($id);
+        $movie = Movie::onlyTrashed()->findOrFail($id);
 
-        if ($movie) {
-            // Hapus file poster dari storage
-            $filePath = storage_path('app/public/' . $movie->poster);
-            if (file_exists($filePath)) {
-                unlink($filePath);
-            }
-
-            // forceDelete() = menghapus data secara permanen, data hilang bahkan dari db nya
-            $movie->forceDelete();
-
-            return redirect()->back()->with('success', 'Berhasil menghapus data secara permanen!');
+        // Hapus file poster jika ada
+        if ($movie->poster && file_exists(storage_path('app/public/' . $movie->poster))) {
+            unlink(storage_path('app/public/' . $movie->poster));
         }
 
-        return redirect()->back()->with('error', 'Data tidak ditemukan!');
+        $movie->forceDelete();
+
+        return redirect()->back()->with('success', 'Film dihapus permanen beserta posternya!');
     }
 }

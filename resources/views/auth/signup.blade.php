@@ -33,8 +33,7 @@
                     <small class="text-danger">{{ $message }}</small>
                 @enderror
                 <div data-mdb-input-init class="form-outline">
-                    <input type="text" id="form3Example1" class="form-control" @error('firt_name') is-invalid @enderror name="first_name" />
-
+                    <input type="text" id="form3Example1" class="form-control @error('first_name') is-invalid @enderror" name="first_name" />
                     <label class="form-label" for="form3Example1">First name</label>
                 </div>
             </div>
@@ -43,8 +42,7 @@
                     <small class="text-danger">{{ $message }}</small>
                 @enderror
                 <div data-mdb-input-init class="form-outline">
-                    <input type="text" id="form3Example2" class="form-control" @error('last_name') is-invalid @enderror
-                        name="last_name" />
+                    <input type="text" id="form3Example2" class="form-control @error('last_name') is-invalid @enderror" name="last_name" />
                     <label class="form-label" for="form3Example2">Last name</label>
                 </div>
             </div>
@@ -55,8 +53,7 @@
         @enderror
         <!-- Email input -->
         <div data-mdb-input-init class="form-outline mb-4">
-            <input type="email" id="form3Example3" class="form-control" @error('email') is-invalid @enderror
-                name="email" />
+            <input type="email" id="form3Example3" class="form-control @error('email') is-invalid @enderror" name="email" />
             <label class="form-label" for="form3Example3">Email address</label>
         </div>
 
@@ -65,8 +62,7 @@
         @enderror
         <!-- Password input -->
         <div data-mdb-input-init class="form-outline mb-4">
-            <input type="password" id="form3Example4" class="form-control" @error('password') is-invalid @enderror
-                name="password" />
+            <input type="password" id="form3Example4" class="form-control @error('password') is-invalid @enderror" name="password" />
             <label class="form-label" for="form3Example4">Password</label>
         </div>
 

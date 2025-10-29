@@ -38,7 +38,7 @@ Route::get('/logout', [UserController::class, 'logout'])->name('logout');
 // Delete untuk menghapus data
 
 // Untuk Halaman Admin
-Route::middleware('isAdmin')->group(function () {
+Route::middleware('isAdmin')->prefix('/admin')->name('admin.')->group(function () {
     Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', function () {
             return view('admin.dashboard');

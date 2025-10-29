@@ -26,6 +26,17 @@
                     <small class="text-danger">{{ $message }}</small>
                 @enderror
             </div>
+            <div class="mb-3">
+                <label for="role" class="form-label">Role</label>
+                <select name="role" id="role" class="form-control @error('role') is-invalid @enderror">
+                    <option value="">Pilih Role</option>
+                    <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Admin</option>
+                    <option value="staff" {{ old('role') == 'staff' ? 'selected' : '' }}>Staff</option>
+                </select>
+                @error('role')
+                    <small class="text-danger">{{ $message }}</small>
+                @enderror
+            </div>
             <button type="submit" class="btn btn-primary">Kirim</button>
         </form>
     </div>

@@ -105,17 +105,20 @@ class UserController extends Controller
             'name' => 'required',
             'email' => 'required|email|unique:users,email',
             'password' => 'required',
+            'role' => 'required|in:admin,staff',
         ], [
             'name.required' => 'Nama pengguna wajib di isi',
             'email.required' => 'Email pengguna wajib di isi',
             'email.unique' => 'Email sudah pernah di gunakan',
             'email.email' => 'Email tidak valid',
+            'role.required' => 'Role wajib dipilih',
+            'role.in' => 'Role harus admin atau staff',
         ]);
         $createData = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'role' => 'staff',
-            'password' => $request->password,
+            'role' => $request->role,
+            'password' => Hash::make($request->password),
         ]);
         if ($createData) {
             return redirect()->route('admin.users.index')->with('success', 'Berhasil membuat data baru!');
