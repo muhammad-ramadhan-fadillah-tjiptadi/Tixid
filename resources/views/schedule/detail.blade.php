@@ -91,7 +91,7 @@
                     <div class="dropdown">
                         <button class="btn btn-light w-100 text-start dropdown-toggle" type="button"
                             id="dropdownMenuButton" data-mdb-dropdown-init data-mdb-ripple-init aria-expanded="false">
-                            <i class="fa-solid fa-location-dot"></i> Bogor
+                            <i class="fa-solid fa-location-dot"></i> Sortir
                         </button>
                         <ul class="dropdown-menu w-100" aria-labelledby="dropdownMenuButton">
                             <li><a class="dropdown-item" href="?sort_price={{ $sortPrice }}">Harga</a></li>

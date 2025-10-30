@@ -25,15 +25,20 @@
             </div>
         </div>
         {{-- <h5 class="mb-3">Data Film</h5> --}}
-        <table class="table table-bordered">
-            <tr>
-                <th>No</th>
-                <th>Poster</th>
-                <th>Judul Film</th>
-                <th>Status Aktif</th>
-                <th>Aksi</th>
-            </tr>
-            @foreach ($movies as $key => $movie)
+        <table class="table table-bordered" id="moviesTable">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Poster</th>
+                    <th>Judul Film</th>
+                    <th>Status Aktif</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Data will be loaded by DataTables -->
+            </tbody>
+            {{-- @foreach ($movies as $key => $movie)
                 <tr>
                     <td>{{ $key + 1 }}</td>
                     <td>
@@ -64,7 +69,7 @@
                         </form>
                     </td>
                 </tr>
-            @endforeach
+            @endforeach --}}
         </table>
         {{-- Modal --}}
         <div class="modal fade" id="modalDetail" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -90,6 +95,49 @@
 {{-- mengisi stack --}}
 @push('script')
     <script>
+        $(function() {
+            $('#moviesTable').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: "{{ route('admin.movies.datatables') }}",
+                responsive: true,
+                autoWidth: false,
+                // urutan column (td), pastikan urutan sesuai th
+                // data: 'nama' -> nama diambil dari rowColumns jika addColumns, atau field dari model fillable
+                columns: [{
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'poster_img',
+                        name: 'poster_img',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'title',
+                        name: 'title',
+                        orderable: true,
+                        searchable: true
+                    },
+                    {
+                        data: 'actived_badge',
+                        name: 'actived_badge',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false
+                    },
+                ]
+            });
+        });
+
         function showModal(item) {
             // console.log(item)
             // pengambilan gambar di public

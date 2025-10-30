@@ -10,6 +10,7 @@ use League\CommonMark\Extension\DescriptionList\Node\Description;
 use Storage;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\MovieExport;
+use Yajra\DataTables\Facades\DataTables;
 
 class MovieController extends Controller
 {
@@ -20,6 +21,40 @@ class MovieController extends Controller
     {
         $movies = Movie::all();
         return view('admin.movie.index', compact('movies'));
+    }
+
+    public function datatables()
+    {
+        $movie = Movie::query();
+        return DataTables::of($movie)
+        // Datatables::of($movies) -> mengambil data dari query model movie keseluruhan field
+        ->addIndexColumn()
+        // addIndexColum -> mengambil index data, mulai dari 1
+        ->addColumn('poster_img', function($movie){
+            // addColumn -> buat menambahkan kolum yang bukan bagian dari field tadi
+            $url = asset('storage/' . $movie->poster);
+            return '<img src="' . $url . '" width="70" class="img-fluid">';
+        })
+        ->addColumn('actived_badge', function($movie){
+            if ($movie->activated) {
+                return '<span class="badge bg-success">Aktif</span>';
+            } else {
+                return '<span class="badge bg-danger">Non-Aktif</span>';
+            }
+        })
+        ->addColumn('action', function($movie) {
+            $btnDetail = '<button class="btn btn-secondary me-2" onclick="showModal({{ ' . $movie . ' }})">Detail</button>';
+            $btnEdit = '<a href="' . route('admin.movies.edit', $movie->id) . '" class="btn btn-primary me-2">Edit</a>';
+            $btnDelete = '<form action="' . route('admin.movies.delete', $movie->id) . '" method="POST" class="me-2">' . csrf_field() . method_field('DELETE') . '<button type="submit" class="btn btn-danger">Hapus</button></form>';
+            $btnNonaktif = '';
+            if($movie->actived) {
+                $btnNonaktif = '<form action="' . route('admin.cinemas.nonaktif', $movie->id) . '" method="POST" class="me-2">' . csrf_field() . method_field('PATCH') . '<button type="submit" class="btn btn-warning">Non-Aktif</button></form>';
+            }
+            return '<div class="d-flex justify-content-center align-items-center gap-2">' . $btnDetail . $btnEdit . $btnDelete . $btnNonaktif . '</div>';
+        })
+        ->rawColumns(['poster_img', 'actived_badge', 'action'])
+        // rawColumns -> mendaftarkan clumn yang baru dibuat pada addColumn
+        ->make(true);
     }
 
     public function home()
