@@ -17,13 +17,13 @@ Route::middleware('guest')->group(function () {
     Route::get('/login', function () {
         return view('auth.login');
     })->name('login');
-    
+
     Route::post('/login', [UserController::class, 'login'])->name('login.submit');
-    
+
     Route::get('/signup', function () {
         return view('auth.signup');
     })->name('signup');
-    
+
     Route::post('/signup', [UserController::class, 'register'])->name('signup.send_data');
 });
 
@@ -64,6 +64,7 @@ Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(f
         Route::get('/trash', [CinemaController::class, 'trash'])->name('trash');
         Route::patch('/restore/{id}', [CinemaController::class, 'restore'])->name('restore');
         Route::delete('/delete-permanent/{id}', [CinemaController::class, 'deletePermanent'])->name('delete-permanent');
+        Route::get('/datatables', [CinemaController::class, 'datatables'])->name('datatables');
     });
 
     // Users
@@ -78,6 +79,7 @@ Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(f
         Route::get('/trash', [UserController::class, 'trash'])->name('trash');
         Route::patch('/restore/{id}', [UserController::class, 'restore'])->name('restore');
         Route::delete('/delete-permanent/{id}', [UserController::class, 'deletePermanent'])->name('delete-permanent');
+        Route::get('/datatables', [UserController::class, 'datatables'])->name('datatables');
     });
 });
 

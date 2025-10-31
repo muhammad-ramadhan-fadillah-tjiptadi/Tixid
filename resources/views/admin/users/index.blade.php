@@ -20,41 +20,64 @@
             </div>
         </div>
         {{-- <h5 class="mt-3">Data Pengguna (Admin & Staff)</h5> --}}
-        <table class="table table-bordered">
-            <tr>
-                <th>No</th>
-                <th>Nama</th>
-                <th>Email</th>
-                <th>Role</th>
-            </tr>
-            {{-- $users : dari compact, karna pake all jadi array dimensi --}}
-            @foreach ($users as $index => $item)
+        <table class="table table-bordered" id="usersTable">
+            <thead>
                 <tr>
-                    {{-- $index dari nol, biar muncul 1 -> +1 --}}
-                    <th>{{ $index + 1 }}</th>
-                    {{-- name. location dari fillable model cinemas --}}
-                    <th>{{ $item['name'] }}</th>
-                    <th>{{ $item['email'] }}</th>
-                    <th>
-                        @if ($item['role'] == 'admin')
-                            <span class="badge badge-primary">Admin</span>
-                        @elseif($item['role'] == 'staff')
-                            <span class="badge badge-success">Staff</span>
-                        @elseif($item['role'] == 'user')
-                            <span class="badge badge-warning">User</span>
-                        @endif
-                    </th>
-                    <th class="d-flex">
-                        {{-- ['id' => $item['id']] : mengirimkan $item['id'] ke route {'id'} --}}
-                        <a href="{{ route('admin.users.edit', ['id' => $item['id']]) }}" class="btn btn-secondary">Edit</a>
-                        <form action="{{ route('admin.users.delete', ['id' => $item['id']]) }}" method="POST">
-                            @csrf
-                            @method('DELETE')
-                            <button class="btn btn-danger ms-3">Hapus</button>
-                        </form>
-                    </th>
+                    <th>No</th>
+                    <th>Nama</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Aksi</th>
                 </tr>
-            @endforeach
+            </thead>
+            <tbody>
+                <!-- Data akan diisi oleh DataTables -->
+            </tbody>
         </table>
     </div>
 @endsection
+
+@push('script')
+    <script>
+        $(function() {
+            $('#usersTable').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: "{{ route('admin.users.datatables') }}",
+                responsive: true,
+                autoWidth: false,
+                columns: [{
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex',
+                        orderable: false,
+                        searchable: false,
+                    },
+                    {
+                        data: 'name',
+                        name: 'name',
+                        orderable: true,
+                        searchable: true
+                    },
+                    {
+                        data: 'email',
+                        name: 'email',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'role',
+                        name: 'role',
+                        orderable: false,
+                        searchable: false,
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false,
+                    }
+                ]
+            });
+        });
+    </script>
+@endpush

@@ -23,33 +23,57 @@
             </div>
         </div>
         {{-- <h5 class="mt-3">Data Bioskop</h5> --}}
-        <table class="table table-bordered">
-            <tr>
-                <th>No</th>
-                <th>Nama Bioskop</th>
-                <th>Lokasi Bioskop</th>
-                <th>Aksi</th>
-            </tr>
-            {{-- $cinemas : dari compact, karna pake all jadi array dimensi --}}
-            @foreach ($cinemas as $index => $item)
+        <table class="table table-bordered" id="cinemaTables">
+            <thead>
                 <tr>
-                    {{-- $index dari nol, biar muncul 1 -> +1 --}}
-                    <th>{{ $index + 1 }}</th>
-                    {{-- name. location dari fillable model cinemas --}}
-                    <th>{{ $item['name'] }}</th>
-                    <th>{{ $item['location'] }}</th>
-                    <th class="d-flex">
-                        {{-- ['id' => $item['id']] : mengirimkan $item['id'] ke route {'id'} --}}
-                        <a href="{{ route('admin.cinemas.edit', ['id' => $item['id']]) }}"
-                            class="btn btn-secondary">Edit</a>
-                        <form action="{{ route('admin.cinemas.delete', ['id' => $item['id']]) }}" method="POST">
-                            @csrf
-                            @method('DELETE')
-                            <button class="btn btn-danger ms-3">Hapus</button>
-                        </form>
-                    </th>
+                    <th>No</th>
+                    <th>Nama Bioskop</th>
+                    <th>Lokasi Bioskop</th>
+                    <th>Aksi</th>
                 </tr>
-            @endforeach
+            </thead>
+            <tbody>
+
+            </tbody>
         </table>
     </div>
 @endsection
+
+@push('script')
+    <script>
+        $(function() {
+            $('#cinemaTables').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: "{{ route('admin.cinemas.datatables') }}",
+                responsive: true,
+                autoWidth: false,
+                columns: [{
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex',
+                        orderable: false,
+                        searchable: false,
+                    },
+                    {
+                        data: 'name',
+                        name: 'name',
+                        orderable: true,
+                        searchable: true
+                    },
+                    {
+                        data: 'location',
+                        name: 'location',
+                        orderable: true,
+                        searchable: true
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false,
+                    }
+                ]
+            });
+        });
+    </script>
+@endpush

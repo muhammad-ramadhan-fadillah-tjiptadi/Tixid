@@ -13,7 +13,8 @@
     <!-- MDB -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/9.1.0/mdb.min.css" rel="stylesheet" />
     {{-- JQuery CDN --}}
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     {{-- Datatables CDN --}}
     <link rel="stylesheet" href="https://cdn.datatables.net/2.3.4/css/dataTables.dataTables.min.css">
 </head>
@@ -66,7 +67,7 @@
                             <a class="nav-link" href="{{ route('staff.schedules.index') }}">Jadwal Tiket</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('staff.promos.index')}}">Promo</a>
+                            <a class="nav-link" href="{{ route('staff.promos.index') }}">Promo</a>
                         </li>
                     @else
                         {{-- Jika bukan admin/belum login,munculin ini --}}
@@ -97,7 +98,10 @@
                 <div class="d-flex align-items-center">
                     {{-- Auth::check() : Mengecheck udah login/belum --}}
                     @if (Auth::check())
-                        <a href="{{ route('logout') }}" class="btn btn-danger">logout</a>
+                        <form action="{{ route('logout') }}" method="POST" class="d-inline">
+                            @csrf
+                            <button type="submit" class="btn btn-danger">Logout</button>
+                        </form>
                     @else
                         <a href="{{ route('login') }}" class="btn btn-link text-warning px-3 me-2">
                             Login
@@ -117,7 +121,10 @@
     {{-- wadah content dinamis --}}
     @yield('content')
 
-    {{-- Datatables CDN --}}
+    <!-- Bootstrap 5 JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- DataTables JS -->
     <script src="https://cdn.datatables.net/2.3.4/js/dataTables.min.js"></script>
     {{-- CDN --}}
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"
@@ -128,6 +135,8 @@
     </script>
     <!-- MDB -->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/9.1.0/mdb.umd.min.js"></script>
+    <!-- MDB JS -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/9.1.0/mdb.min.js"></script>
     @stack('script')
 </body>
 

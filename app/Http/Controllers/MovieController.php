@@ -27,34 +27,37 @@ class MovieController extends Controller
     {
         $movie = Movie::query();
         return DataTables::of($movie)
-        // Datatables::of($movies) -> mengambil data dari query model movie keseluruhan field
-        ->addIndexColumn()
-        // addIndexColum -> mengambil index data, mulai dari 1
-        ->addColumn('poster_img', function($movie){
-            // addColumn -> buat menambahkan kolum yang bukan bagian dari field tadi
-            $url = asset('storage/' . $movie->poster);
-            return '<img src="' . $url . '" width="70" class="img-fluid">';
-        })
-        ->addColumn('actived_badge', function($movie){
-            if ($movie->activated) {
-                return '<span class="badge bg-success">Aktif</span>';
-            } else {
-                return '<span class="badge bg-danger">Non-Aktif</span>';
-            }
-        })
-        ->addColumn('action', function($movie) {
-            $btnDetail = '<button class="btn btn-secondary me-2" onclick="showModal({{ ' . $movie . ' }})">Detail</button>';
-            $btnEdit = '<a href="' . route('admin.movies.edit', $movie->id) . '" class="btn btn-primary me-2">Edit</a>';
-            $btnDelete = '<form action="' . route('admin.movies.delete', $movie->id) . '" method="POST" class="me-2">' . csrf_field() . method_field('DELETE') . '<button type="submit" class="btn btn-danger">Hapus</button></form>';
-            $btnNonaktif = '';
-            if($movie->actived) {
-                $btnNonaktif = '<form action="' . route('admin.cinemas.nonaktif', $movie->id) . '" method="POST" class="me-2">' . csrf_field() . method_field('PATCH') . '<button type="submit" class="btn btn-warning">Non-Aktif</button></form>';
-            }
-            return '<div class="d-flex justify-content-center align-items-center gap-2">' . $btnDetail . $btnEdit . $btnDelete . $btnNonaktif . '</div>';
-        })
-        ->rawColumns(['poster_img', 'actived_badge', 'action'])
-        // rawColumns -> mendaftarkan clumn yang baru dibuat pada addColumn
-        ->make(true);
+            // Datatables::of($movies) -> mengambil data dari query model movie keseluruhan field
+            ->addIndexColumn()
+            // addIndexColum -> mengambil index data, mulai dari 1
+            ->addColumn('poster_img', function ($movie) {
+                // addColumn -> buat menambahkan kolum yang bukan bagian dari field tadi
+                $url = asset('storage/' . $movie->poster);
+                return '<img src="' . $url . '" width="70" class="img-fluid">';
+            })
+            ->addColumn('actived_badge', function ($movie) {
+                if ($movie->activated) {
+                    return '<span class="badge bg-success">Aktif</span>';
+                } else {
+                    return '<span class="badge bg-danger">Non-Aktif</span>';
+                }
+            })
+            ->addColumn('action', function ($movie) {
+                // $btnDetail = '<button class="btn btn-secondary me-2" onclick="showModal(' . $movie->id . ')">Detail</button>';
+                $btnDetail = '<button class="btn btn-secondary me-2" onclick="showModal(' . htmlspecialchars(json_encode($movie), ENT_QUOTES, 'UTF-8') . ')">Detail</button>';
+                $btnEdit = '<a href="' . route('admin.movies.edit', $movie->id) . '" class="btn btn-primary me-2">Edit</a>';
+                $btnDelete = '<form action="' . route('admin.movies.delete', $movie->id) . '" method="POST" class="me-2">' . csrf_field() . method_field('DELETE') . '<button type="submit" class="btn btn-danger">Hapus</button></form>';
+                $btnNonaktif = '';
+                if ($movie->activated) {
+                    $btnNonaktif = '<form action="' . route('admin.movies.patch', $movie->id) . '" method="POST" class="d-inline me-2">' .
+                        csrf_field() . method_field('PATCH') .
+                        '<button type="submit" class="btn btn-warning">Non-Aktifkan</button></form>';
+                }
+                return '<div class="d-flex justify-content-center align-items-center gap-2">' . $btnDetail . $btnEdit . $btnDelete . $btnNonaktif . '</div>';
+            })
+            ->rawColumns(['poster_img', 'actived_badge', 'action'])
+            // rawColumns -> mendaftarkan clumn yang baru dibuat pada addColumn
+            ->make(true);
     }
 
     public function home()
@@ -303,6 +306,23 @@ class MovieController extends Controller
     }
 
     public function deletePermanent($id)
+    {
+        $movie = Movie::withTrashed()->find($id);
+        $movie->forceDelete();
+        return redirect()->route('admin.movies.trash')->with('success', 'Data berhasil dihapus permanen');
+    }
+
+    public function patch($id)
+    {
+        $movie = Movie::find($id);
+        $movie->activated = !$movie->activated;
+        $movie->save();
+
+        $status = $movie->activated ? 'diaktifkan' : 'dinonaktifkan';
+        return redirect()->route('admin.movies.index')->with('success', "Film berhasil $status");
+    }
+
+    public function deletePermanent2($id)
     {
         $movie = Movie::onlyTrashed()->findOrFail($id);
 

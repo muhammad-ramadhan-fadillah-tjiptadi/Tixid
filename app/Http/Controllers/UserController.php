@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\UserExport;
+use Yajra\DataTables\Facades\DataTables;
 
 class UserController extends Controller
 {
@@ -18,6 +19,38 @@ class UserController extends Controller
     {
         $users = User::whereIn('role', ['admin', 'staff'])->get();
         return view('admin.users.index', compact('users'));
+    }
+
+    public function datatables()
+    {
+        $user = User::whereIn('role', ['admin', 'staff']);
+        return DataTables::of($user)
+            ->addIndexColumn()
+            ->addColumn('name', function ($user) {
+                return $user->name;
+            })
+            ->addColumn('email', function ($user) {
+                return $user->email;
+            })
+            ->addColumn('role', function ($user) {
+                if ($user->role === 'admin') {
+                    return '<span class="badge badge-primary">Admin</span>';
+                } elseif ($user->role === 'staff') {
+                    return '<span class="badge badge-success">Staff</span>';
+                } else {
+                    return '<span class="badge badge-warning">User</span>';
+                }
+            })
+            ->addColumn('action', function ($user) {
+                $btnEdit = '<a href="' . route('admin.users.edit', ['id' => $user->id]) . '" class="btn btn-secondary">Edit</a>';
+                $btnDelete = '<form action="' . route('admin.users.delete', ['id' => $user->id]) . '" method="POST">
+                            ' . csrf_field() . method_field('DELETE') . '
+                            <button class="btn btn-danger ms-3">Hapus</button>
+                        </form>';
+                return '<div class="d-flex justify-content-center align-items-center gap-2">' . $btnEdit . $btnDelete . '</div>';
+            })
+            ->rawColumns(['role', 'action'])
+            ->make(true);
     }
 
     public function register(Request $request)
@@ -198,7 +231,7 @@ class UserController extends Controller
 
     public function restore($id)
     {
-        $user= User::onlyTrashed()->find($id);
+        $user = User::onlyTrashed()->find($id);
         // restore() -> mengembalikan data yang sudah dihapus
         $user->restore();
         return redirect()->route('admin.users.index')->with('success', 'Berhasil mengembalikan data!');
