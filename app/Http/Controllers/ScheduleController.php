@@ -8,6 +8,7 @@ use App\Models\Movie;
 use App\Models\Schedule;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
+use Yajra\DataTables\Facades\DataTables;
 
 class ScheduleController extends Controller
 {
@@ -22,6 +23,37 @@ class ScheduleController extends Controller
         // isi with () dari function rlasi di model
         $schedules = Schedule::with(['cinema', 'movie'])->get();
         return view('staff.schedule.index', compact('cinemas', 'movies', 'schedules'));
+    }
+
+    public function datatables()
+    {
+        $schedules = Schedule::with(['cinema', 'movie']);
+        
+        return DataTables::of($schedules)
+            ->addIndexColumn()
+            ->addColumn('cinema_name', function($schedule) {
+                return $schedule->cinema->name ?? '-';
+            })
+            ->addColumn('movie_title', function($schedule) {
+                return $schedule->movie->title ?? '-';
+            })
+            ->addColumn('formatted_price', function($schedule) {
+                return 'Rp ' . number_format($schedule->price, 0, ',', '.');
+            })
+            ->addColumn('show_times', function($schedule) {
+                $times = is_array($schedule->hours) ? $schedule->hours : [];
+                return view('components.show-times', ['times' => $times])->render();
+            })
+            ->addColumn('action', function($schedule) {
+                $btnEdit = '<a href="' . route('staff.schedules.edit', $schedule->id) . '" class="btn btn-primary">Edit</a>';
+                $btnDelete = '<form action="' . route('staff.schedules.delete', $schedule->id) . '" method="POST" class="d-inline">
+                    ' . csrf_field() . method_field('DELETE') . '
+                    <button type="submit" class="btn btn-danger ms-2" onclick="return confirm(\'Apakah Anda yakin ingin menghapus jadwal ini?\')">Hapus</button>
+                </form>';
+                return '<div class="d-flex">' . $btnEdit . $btnDelete . '</div>';
+            })
+            ->rawColumns(['show_times', 'action'])
+            ->make(true);
     }
 
     /**

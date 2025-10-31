@@ -21,40 +21,20 @@
                 {{ Session::get('success') }}
             </div>
         @endif
-        <table class="table table-bordered">
-            <tr>
-                <th>No</th>
-                <th>Nama Bioskop</th>
-                <th>Judul Film</th>
-                <th>Harga</th>
-                <th>Jadwal Tayang</th>
-                <th>Aksi</th>
-            </tr>
-            @foreach ($schedules as $key => $schedule)
+        <table class="table table-bordered" id="schedulesTable">
+            <thead>
                 <tr>
-                    <td>{{ $key + 1 }}</td>
-                    {{-- memunculkan detail relasi : $item['namarelasi']['data'] --}}
-                    <td>{{ $schedule['cinema']['name'] ?? '-'}}</td>
-                    <td>{{ $schedule['movie']['title'] ?? '-'}}</td>
-                    <td>Rp. {{ number_format($schedule['price'], 0, ',', '.') }}</td>
-                    {{-- karena hours, array memunculkan dengan loop --}}
-                    <td>
-                        <ul>
-                            @foreach ($schedule['hours'] as $hours)
-                            @endforeach
-                            <li>{{ $hours }}</li>
-                        </ul>
-                    </td>
-                    <td class="d-flex">
-                        <a href="{{ route('staff.schedules.edit', $schedule->id) }}" class="btn btn-primary">Edit</a>
-                        <form action="{{ route('staff.schedules.delete', $schedule->id) }}" method="POST">
-                            @csrf
-                            @method('DELETE')
-                            <button class="btn btn-danger ms-2">Hapus</button>
-                        </form>
-                    </td>
+                    <th>No</th>
+                    <th>Nama Bioskop</th>
+                    <th>Judul Film</th>
+                    <th>Harga</th>
+                    <th>Jadwal Tayang</th>
+                    <th>Aksi</th>
                 </tr>
-            @endforeach
+            </thead>
+            <tbody>
+                <!-- Data will be loaded by DataTables -->
+            </tbody>
         </table>
         {{-- Modal --}}
         <div class="modal fade" id="modalAdd" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -136,6 +116,49 @@
 
 @push('script')
     <script>
+        $(document).ready(function() {
+            $('#schedulesTable').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: '{{ route('staff.schedules.datatables') }}',
+                responsive: true,
+                autoWidth: false,
+                columns: [{
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'cinema_name',
+                        name: 'cinema_name'
+                    },
+                    {
+                        data: 'movie_title',
+                        name: 'movie.title'
+                    },
+                    {
+                        data: 'formatted_price',
+                        name: 'price',
+                        orderable: true,
+                        searchable: false
+                    },
+                    {
+                        data: 'show_times',
+                        name: 'hours',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false
+                    }
+                ]
+            });
+        });
+
         function addInput() {
             let content = `<input type="time" name="hours[]" id="hours" class="form-control mt-2">`;
             // ambil tempat input akan disimpan

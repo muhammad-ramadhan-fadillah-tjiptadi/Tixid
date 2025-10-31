@@ -116,5 +116,6 @@ Route::middleware(['auth', 'isStaff'])->prefix('staff')->name('staff.')->group(f
         Route::patch('/restore/{id}', [ScheduleController::class, 'restore'])->name('restore');
         Route::delete('/delete-permanent/{id}', [ScheduleController::class, 'deletePermanent'])->name('delete-permanent');
         Route::get('/export', [ScheduleController::class, 'export'])->name('export');
+        Route::get('/datatables', [ScheduleController::class, 'datatables'])->name('datatables');
     });
 });
