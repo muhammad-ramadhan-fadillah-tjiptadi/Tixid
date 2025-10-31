@@ -6,6 +6,7 @@ use App\Models\Promo;
 use App\Exports\PromoExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
 
 class PromoController extends Controller
 {
@@ -16,6 +17,33 @@ class PromoController extends Controller
     {
         $promos = Promo::all();
         return view('staff.promo.index', compact('promos'));
+    }
+
+    public function datatables()
+    {
+        $promo = Promo::all();
+        return DataTables::of($promo)
+            ->addIndexColumn()
+            ->addColumn('promo_code', function ($promo) {
+                return $promo->promo_code;
+            })
+            ->addColumn('discount', function ($promo) {
+                if ($promo->type === 'percent') {
+                    return number_format($promo->discount, 0, ',', '.') . '%';
+                } else {
+                    return 'Rp ' . number_format($promo->discount, 0, ',', '.');
+                }
+            })
+            ->addColumn('action', function ($promo) {
+                $btnEdit = '<a href="' . route('staff.promos.edit', $promo->id) . '" class="btn btn-secondary">Edit</a>';
+                $btnDelete = '<form action="' . route('staff.promos.delete', $promo->id) . '" method="POST" class="d-inline">
+                            ' . csrf_field() . method_field('DELETE') . '
+                            <button type="submit" class="btn btn-danger ms-3">Hapus</button>
+                        </form>';
+                return '<div class="d-flex justify-content-center align-items-center gap-2">' . $btnEdit . $btnDelete . '</div>';
+            })
+            ->rawColumns(['action'])
+            ->make(true);
     }
 
     /**

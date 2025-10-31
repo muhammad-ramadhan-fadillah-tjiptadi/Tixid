@@ -102,6 +102,7 @@ Route::middleware(['auth', 'isStaff'])->prefix('staff')->name('staff.')->group(f
         Route::get('/trash', [PromoController::class, 'trash'])->name('trash');
         Route::patch('/restore/{id}', [PromoController::class, 'restore'])->name('restore');
         Route::delete('/delete-permanent/{id}', [PromoController::class, 'deletePermanent'])->name('delete-permanent');
+        Route::get('/datatables', [PromoController::class, 'datatables'])->name('datatables');
     });
 
     // Schedules
