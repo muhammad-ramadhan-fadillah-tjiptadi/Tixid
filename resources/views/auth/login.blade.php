@@ -17,7 +17,7 @@
 
 <body>
 
-    <form class="w-50 d-block mx-auto my-5" method="POST" action="{{ route('auth') }}">
+    <form class="w-50 d-block mx-auto my-5" method="POST" action="{{ route('login.submit') }}">
         {{-- Class menggunakan pascal dan menghubungkan dengan static :: llau get adalah method --}}
         @csrf
         @if (Session::get('success'))

@@ -18,7 +18,7 @@ Route::middleware('guest')->group(function () {
         return view('auth.login');
     })->name('login');
 
-    Route::post('/login', [UserController::class, 'login'])->name('login.submit');
+    Route::post('/login', [UserController::class, 'authentication'])->name('login.submit');
 
     Route::get('/signup', function () {
         return view('auth.signup');
@@ -27,8 +27,9 @@ Route::middleware('guest')->group(function () {
     Route::post('/signup', [UserController::class, 'register'])->name('signup.send_data');
 });
 
-Route::post('/auth', [UserController::class, 'authentication'])->name('auth');
-Route::post('/logout', [UserController::class, 'logout'])->name('logout');
+Route::post('/logout', [UserController::class, 'logout'])
+    ->middleware('auth')
+    ->name('logout');
 
 // Admin Routes
 Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(function () {

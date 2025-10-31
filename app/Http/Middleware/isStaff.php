@@ -16,13 +16,14 @@ class isStaff
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::check() && Auth::user()->role == 'staff') {
-            //jika sudah login & role nya admin
-            //return next $next -> boleh akses
-            return $next($request);
-        } else {
-            //jika belum login/bukan admin
-            return redirect()->route('home');
+        if (!Auth::check()) {
+            return redirect()->route('login');
         }
+
+        if (Auth::user()->role !== 'staff') {
+            return redirect()->route('home')->with('error', 'Unauthorized access.');
+        }
+
+        return $next($request);
     }
 }
