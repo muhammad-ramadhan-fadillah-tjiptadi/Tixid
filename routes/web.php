@@ -13,8 +13,7 @@ Route::get('/schedules/detail/{movie_id}', [MovieController::class, 'movieSchedu
 Route::get('/movies/active', [MovieController::class, 'homeMovies'])->name('home.movies.all');
 
 // Auth Routes
-Route::middleware('guest')->group(function () {
-    Route::get('/login', function () {
+Route::middleware('guest')->group(function () {    Route::get('/login', function () {
         return view('auth.login');
     })->name('login');
 
