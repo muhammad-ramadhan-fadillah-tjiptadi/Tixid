@@ -92,11 +92,12 @@ class UserController extends Controller
     public function authentication(Request $request)
     {
         $request->validate([
-            'email' => 'required',
+            'email' => 'required|email',
             'password' => 'required'
         ], [
             'email.required' => 'Email Harus Diisi',
-            'password.required' => 'Passwoord Harus Diisi'
+            'email.email' => 'Format Email Tidak Valid',
+            'password.required' => 'Password Harus Diisi'
         ]);
         // Data yang akan digunakan untuk verifikasi
         $data = $request->only(['password', 'email']);

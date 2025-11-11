@@ -167,4 +167,21 @@ class CinemaController extends Controller
         $cinema->forceDelete();
         return redirect()->back()->with('success', 'Berhasil menghapus data!');
     }
+
+    public function cinemaList()
+    {
+        $cinemas = Cinema::all();
+        return view('schedule.cinemas', compact('cinemas'));
+    }
+
+    public function cinemaSchedules($cinema_id)
+    {
+        // whereHas('nama relasi', function($q) {..} : argumen 1 (nama relasi) wajibb, argumen 2 (func untuk filter pada relasi) optional)
+        // whereHas('nama relasi') -> Movie::whereHas('schedules') megambil data film hanya yang memiliki relasi (memiliki data) schedules
+        //  whereHas ('nama relasi', function($q) {..} -> Schedule::whereHas('movie', function($q) {$q->where('actived', 1)})) mengambil data schedule hanya yang memiliki relasi (memiliki data) movie dan nilai actived pada movienya 1
+        $schedules = Schedule::where('cinema_id', $cinema_id)->with('movie')->whereHas('movie', function($q) {
+            $q->where('activated', 1);
+        })->get();
+        return view('schedule.cinema-schedules', compact('schedules'));
+    }
 }

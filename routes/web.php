@@ -12,8 +12,13 @@ Route::get('/', [MovieController::class, 'home'])->name('home');
 Route::get('/schedules/detail/{movie_id}', [MovieController::class, 'movieSchedule'])->name('movieSchedule');
 Route::get('/movies/active', [MovieController::class, 'homeMovies'])->name('home.movies.all');
 
+Route::middleware('isUser')->group(function() {
+    Route::get('/schedules/{schedulesId}/hours/{hourId}', [ScheduleController::class, 'showSeats'])->name('schedules.show_seats');
+});
+
 // Auth Routes
-Route::middleware('guest')->group(function () {    Route::get('/login', function () {
+Route::middleware('guest')->group(function () {
+    Route::get('/login', function () {
         return view('auth.login');
     })->name('login');
 
@@ -29,6 +34,10 @@ Route::middleware('guest')->group(function () {    Route::get('/login', function
 Route::post('/logout', [UserController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
+
+// Menu bioskop pada navbar user
+Route::get('/cinemas/list', [CinemaController::class, 'cinemaList'])->name('cinema.list');
+Route::get('/cinemas/{cinema_id}/schedules', [CinemaController::class, 'cinemaSchedules'])->name('cinema.schedules');
 
 // Admin Routes
 Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(function () {

@@ -26,6 +26,7 @@
                 <tr>
                     <th>No</th>
                     <th>Nama Bioskop</th>
+                    <th>Poster Film</th>
                     <th>Judul Film</th>
                     <th>Harga</th>
                     <th>Jadwal Tayang</th>
@@ -132,6 +133,12 @@
                     {
                         data: 'cinema_name',
                         name: 'cinema_name'
+                    },
+                    {
+                        data: 'movie_poster',
+                        name: 'movie.poster_url',
+                        orderable: false,
+                        searchable: false
                     },
                     {
                         data: 'movie_title',

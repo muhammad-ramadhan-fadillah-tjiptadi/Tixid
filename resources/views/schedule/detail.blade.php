@@ -119,46 +119,61 @@
                         <div class="d-flex gap-3 ps-3 my-2">
                             {{-- Hours berbentuk array, sehingga gunakan loop untuk akses itemnya --}}
                             @foreach ($schedule['hours'] as $index => $hours)
-                            {{-- Argumen pada fungsi selectedHour()
+                                {{-- Argumen pada fungsi selectedHour()
                             1. $schedule -> id : mengambil detail schedule yang akan dibeli
                             2. $index : mengambil index dari array hours untuk mengetahui jam berapa tiket akan dipesan
                             3. this : mengambil element html yang diklik secara penuh untuk diakses javascript
                             --}}
-                                <div class="btn btn-outline-secondary" style="cursor: pointer" onclick="selectedHour('{{ $schedule->id }}', '{{ $index }}', this)">{{ $hours }}</div>
+                                <div class="btn btn-outline-secondary" style="cursor: pointer"
+                                    onclick="selectedHour('{{ $schedule->id }}', '{{ $index }}', this)">
+                                    {{ $hours }}</div>
                             @endforeach
                         </div>
                     </div>
                     <hr>
                 @endforeach
-                <div class="w-100 p-2 bg-light text-center fixed-bottom">
-                    <a href=""><i class="fa-solid fa-ticket"></i>Beli Tiket</a>
+                <div class="w-100 p-2 bg-light text-center fixed-bottom" id="wrapBtn">
+                    {{-- javascript:void(0) nonaktifin href --}}
+                    <a href="javascript:void(0)" id="btnOrder"><i class="fa-solid fa-ticket"></i>Beli Tiket</a>
                 </div>
             </div>
         </div>
     @endsection
     @push('script')
-    <script>
-        let selectedScheduleId = null;
-        let selectedHourIndex = null;
-        let lastClicked = null;
+        <script>
+            let selectedScheduleId = null;
+            let selectedHourIndex = null;
+            let lastClicked = null;
 
-        function selectedHour(scheduleId, hourIndex, el) {
-            selectedScheduleId = scheduleId;
-            selectedHourIndex = hourIndex;
+            function selectedHour(scheduleId, hourIndex, el) {
+                selectedScheduleId = scheduleId;
+                selectedHourIndex = hourIndex;
 
-            if (lastClicked) {
-                lastClicked.style.backgroundColor = "";
-                lastClicked.style.color = "";
-                lastClicked.style.borderColor = "";
+                if (lastClicked) {
+                    lastClicked.style.backgroundColor = "";
+                    lastClicked.style.color = "";
+                    lastClicked.style.borderColor = "";
+                }
+
+                // Ubah warna kotak yang diklik
+                // el diambil dari parameter fungsi dengan nilai argumen this di html nya
+                el.style.backgroundColor = "#112646";
+                el.style.color = "white";
+                el.style.borderColor = "#112646";
+
+                lastClicked = el;
+
+                let wrapBtn = document.querySelector("#wrapBtn");
+                // hapus class (classlist.remove)
+                wrapBtn.classList.remove("bg-light");
+                wrapBtn.style.backgroundColor = "#112646";
+                // memanggil route web.php ada di JS
+                // .replace() mengganti/mengisi path dinamis (scheduleId) di web.php
+                let url = "{{ route('schedules.show_seats', ['schedulesId' => ':schedulesId', 'hourId' => ':hourId']) }}"
+                    .replace(':schedulesId', scheduleId).replace(':hourId', hourIndex);
+                let btnOrder = document.querySelector("#btnOrder");
+                btnOrder.href = url;
+                btnOrder.style.color = "white";
             }
-
-            // Ubah warna kotak yang diklik
-            // el diambil dari parameter fungsi dengan nilai argumen this di html nya
-            el.style.backgroundColor = "#112646";
-            el.style.color = "white";
-            el.style.borderColor = "#112646";
-
-            lastClicked = el;
-        }
-    </script>
+        </script>
     @endpush

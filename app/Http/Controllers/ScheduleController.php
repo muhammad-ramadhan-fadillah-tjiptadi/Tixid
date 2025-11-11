@@ -28,11 +28,17 @@ class ScheduleController extends Controller
     public function datatables()
     {
         $schedules = Schedule::with(['cinema', 'movie']);
-        
+
         return DataTables::of($schedules)
             ->addIndexColumn()
             ->addColumn('cinema_name', function($schedule) {
                 return $schedule->cinema->name ?? '-';
+            })
+            ->addColumn('movie_poster', function($schedule) {
+                if ($schedule->movie && $schedule->movie->poster_url) {
+                    return '<img src="' . asset('storage/' . $schedule->movie->poster_url) . '" alt="' . ($schedule->movie->title ?? '') . '" style="max-width: 100px; height: auto;">';
+                }
+                return '-';
             })
             ->addColumn('movie_title', function($schedule) {
                 return $schedule->movie->title ?? '-';
@@ -196,5 +202,12 @@ class ScheduleController extends Controller
     public function export()
     {
         return Excel::download(new ScheduleExport, 'data-jadwal-tayang.xlsx');
+    }
+
+    public function showSeats($scheduleId, $hourId)
+    {
+        $schedule = Schedule::where('id', $scheduleId)->with('cinema')->first();
+        $hour = $schedule['hours'][$hourId];
+        return view('schedule.show-seats', compact('schedule', 'hour'));
     }
 }

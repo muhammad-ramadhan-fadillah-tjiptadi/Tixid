@@ -40,42 +40,56 @@
             <div class="collapse navbar-collapse" id="navbarButtonsExample">
                 <!-- Left links -->
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    {{-- Jika sudah login (check) dan rolenya admin (user()->role) --}}
-                    @if (Auth::check() && Auth::user()->role == 'admin')
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('admin.dashboard') }}">Dashboard</a>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a data-mdb-dropdown-init class="nav-link dropdown-toggle" href="#"
-                                id="navbarDropdownMenuLink" role="button" aria-expanded="false">
-                                Data Master
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                <li>
-                                    <a class="dropdown-item" href="{{ route('admin.cinemas.index') }}">Data Bioskop</a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="{{ route('admin.movies.index') }}">Data Film</a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="{{ route('admin.users.index') }}">Data Petugas</a>
-                                </li>
-                            </ul>
-                        </li>
-                    @elseif (Auth::check() && Auth::user()->role == 'staff')
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('staff.schedules.index') }}">Jadwal Tiket</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('staff.promos.index') }}">Promo</a>
-                        </li>
+                    @if (Auth::check())
+                        {{-- Jika sudah login (check) dan rolenya admin (user()->role) --}}
+                        @if (Auth::user()->role == 'admin')
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('admin.dashboard') }}">Dashboard</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a data-mdb-dropdown-init class="nav-link dropdown-toggle" href="#"
+                                    id="navbarDropdownMenuLink" role="button" aria-expanded="false">
+                                    Data Master
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('admin.cinemas.index') }}">Data
+                                            Bioskop</a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('admin.movies.index') }}">Data Film</a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('admin.users.index') }}">Data
+                                            Petugas</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        @elseif (Auth::user()->role == 'staff')
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('staff.schedules.index') }}">Jadwal Tiket</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('staff.promos.index') }}">Promo</a>
+                            </li>
+                        @elseif (Auth::user()->role == 'user')
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('home') }}">Beranda</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('cinema.list') }}">Bioskop</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">Tiket</a>
+                            </li>
+                        @endif
                     @else
-                        {{-- Jika bukan admin/belum login,munculin ini --}}
+                        {{-- Jika belum login, munculin menu untuk guest --}}
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Beranda</a>
+                            <a class="nav-link" href="{{ route('home') }}">Beranda</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Bioskop</a>
+                            <a class="nav-link" href="{{ route('cinema.list') }}">Bioskop</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#">Tiket</a>
