@@ -17,32 +17,28 @@ class CinemaController extends Controller
     public function index()
     {
         //model::all() -> mengambil semua data di model
-        $cinemas = Cinema::all();
+        $cinemas = Cinema::query();
         //compact() -> mengirim data ke blade, nama compact sama dengan nama variable
         return view('admin.cinemas.index', compact('cinemas'));
     }
 
     public function datatables()
     {
-        $cinema = Cinema::query();
-        return DataTables::of($cinema)
+        $cinemas = Cinema::query();
+        // DataTables::of($movies) -> mengambil data dari query model movie, keseluruhan field
+        // addColumn() -> menambahkan column yang bukan bagian dari field movies, kbiasanya digunakan untuk button atau field yang nilainya akan diolah/ manipulasi
+        // addIndexColumn() -> mengambil index data, mulai dari 1
+        return DataTables::of($cinemas)
         ->addIndexColumn()
-        ->addColumn('name', function ($cinema) {
-            return $cinema->name;
-        })
-        ->addColumn('location', function ($cinema) {
-            return $cinema->location;
-        })
         ->addColumn('action', function ($cinema) {
-            $btnEdit = '<a href="' . route('admin.cinemas.edit', ['id' => $cinema->id]) . '" class="btn btn-secondary">Edit</a>';
-            $btnDelete = '<form action="' . route('admin.cinemas.delete', ['id' => $cinema->id]) . '" method="POST">
-                            ' . csrf_field() . method_field('DELETE') . '
-                            <button class="btn btn-danger ms-3">Hapus</button>
-                        </form>';
+            $btnEdit = '<a href="' . route('admin.cinemas.edit', $cinema->id) . '" class="btn btn-primary me-2">Edit</a>';
+            $btnDelete = '<form action="' . route('admin.cinemas.delete', $cinema->id) . '" method="POST">
+            ' . @csrf_field() . method_field('DELETE') . ' <button type="submit" class="btn btn-danger">Hapus</button></form>';
             return '<div class="d-flex justify-content-center align-items-center gap-2">' . $btnEdit . $btnDelete . '</div>';
         })
         ->rawColumns(['action'])
         ->make(true);
+        // rawColumns() -> mendaftarkan column uang baru dibuat pada addColumn()
     }
 
     /**

@@ -41,6 +41,7 @@
                             <div style="width: 50px"></div>
                         @endif
                         {{-- bikin style kotak no kursi --}}
+                        {{-- this : untuk mengubah tampilan lalu isi dari this adalah elemen html yang akan digunakanan js --}}
                         <div style="background: #112646; color: white; width: 40px; height: 38px; margin: 5px; border-radius: 5px; text-align: center; padding-top: 3px; cursor: pointer;" onclick="selectSeat('{{ $schedule->price }}', '{{ $row }}', '{{ $col }}', this)">
                             <small><b>{{ $row }}-{{ $col }}</b></small>
                         </div>
@@ -65,13 +66,19 @@
                 <b id="selectedSeat">-</b>
             </div>
         </div>
-        <div class="w-100 bg-light text-center py-3" style="font-weight: bold">RINGKASAN ORDER</div>
-    </div>
+        {{-- input:hidden menyembunyikan konten html, digunakan hanya untuk menyimpan nilai php untuk digunakan di js --}}
+        <input type="hidden" name="user_id" id="user_id" value="{{ Auth::user()->id }}">
+        <input type="hidden" name="schedule_id" id="schedule_id" value="{{ $schedule->id }}">
+        <input type="hidden" name="hour" id="hour" value="{{ $hour }}">
+        <div class="w-100 bg-light text-center py-3" style="font-weight: bold" id="btnCreateOrder">RINGKASAN ORDER</div>
+    </input>
 @endsection
 
 @push('script')
     <script>
         let seats = []; // menyimpan data kursi yang sudah dipilih, bisa lebih dari 1 menggunakan array agar banyak
+        // biar bisa dipake 2 function
+        let totalPrice = 0;
         function selectSeat(price, row, col, element) {
             // buat format A-1
             let seat = row + "-" + col;
@@ -91,13 +98,55 @@
                 element.style.background = '#112646';
             }
 
-            let totalPrice = price * seats.length; // length : kaya count di php, itung isi array
+            totalPrice = price * seats.length; // length : kaya count di php, itung isi array
             let totalPriceElement = document.querySelector("#totalPrice");
             totalPriceElement.innerText = "Rp. " + totalPrice;
 
             let selectedSeatElement = document.querySelector("#selectedSeat");
             // mengubah array menjadi string dipisahkan dengan koma : join()
             selectedSeatElement.innerText = seats.join(', ');
+
+            let btnCreateOrderElement = document.querySelector("#btnCreateOrder");
+            if (seats.length > 0) {
+                btnCreateOrder.style.background = '#112646';
+                // classList.remove : untuk menghapus class css
+                btnCreateOrder.style.color = 'white';
+                btnCreateOrder.classList.remove('bg-light');
+                // fungsi untuk memanggil ajax, ketika btn di klik
+                btnCreateOrderElement.onclick = createOrder;
+            } else {
+                btnCreateOrder.style.background = '';
+                btnCreateOrder.style.color = '';
+                btnCreateOrderElement.onclick = null;
+            }
+        }
+
+        function createOrder() {
+            let data = {
+                user_id: $("#user_id").val(), // ambil value dari input:hidden id="user_id"
+                schedule_id: $("#schedule_id").val(),
+                rows_of_seats: seats,
+                quantity: seats.length,
+                total_price: totalPrice,
+                // length : untuk menghitung nilai array
+                tax: 4000 * seats.length,
+                hour: $("#hour").val(),
+                _token: "{{ csrf_token() }}", // token csrf
+            }
+            // ajax (asynchronus javascript and xml) : memproses data ke atau dari BE
+            $.ajax({
+                url: "{{ route('tickets.store') }}", // route menuju proses data
+                method: "POST", // http method
+                data: data, // data yang akan dikirim ke BE
+                success: function (response) {
+                    // kalo berhasil mau ngapain
+                    console.log(response);
+                },
+                error: function (message) {
+                    // kalo gagal mau ngapain
+                    alert('Gagal membuat data tiket')
+                }
+            })
         }
     </script>
 @endpush

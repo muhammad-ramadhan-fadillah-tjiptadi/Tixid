@@ -6,6 +6,7 @@ use App\Http\Controllers\CinemaController;
 use App\Http\Controllers\MovieController;
 use App\Http\Controllers\PromoController;
 use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\TicketController;
 
 // Public Routes
 Route::get('/', [MovieController::class, 'home'])->name('home');
@@ -14,6 +15,10 @@ Route::get('/movies/active', [MovieController::class, 'homeMovies'])->name('home
 
 Route::middleware('isUser')->group(function() {
     Route::get('/schedules/{schedulesId}/hours/{hourId}', [ScheduleController::class, 'showSeats'])->name('schedules.show_seats');
+
+    Route::prefix('/tickets')->name('tickets.')->group(function() {
+        Route::post('/', [TicketController::class, 'store'])->name('store');
+    });
 });
 
 // Auth Routes
