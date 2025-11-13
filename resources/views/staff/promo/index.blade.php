@@ -22,10 +22,12 @@
         {{-- <h5 class="mt-3">Data Promo</h5> --}}
         <table class="table table-bordered" id="promoTables">
             <tr>
-                <th>No</th>
-                <th>Kode Promo</th>
-                <th>Total Potongan</th>
-                <th>Aksi</th>
+                <thead>
+                    <th>No</th>
+                    <th>Kode Promo</th>
+                    <th>Total Potongan</th>
+                    <th>Aksi</th>
+                </thead>
             </tr>
         </table>
     </div>

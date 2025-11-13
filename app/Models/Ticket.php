@@ -35,6 +35,11 @@ class Ticket extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function schedule()
+    {
+        return $this->belongsTo(Schedule::class);
+    }
+
     public function promo()
     {
         return $this->belongsTo(Promo::class);

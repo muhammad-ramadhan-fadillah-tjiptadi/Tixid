@@ -18,6 +18,9 @@ Route::middleware('isUser')->group(function() {
 
     Route::prefix('/tickets')->name('tickets.')->group(function() {
         Route::post('/', [TicketController::class, 'store'])->name('store');
+        Route::get('/{ticketId}/order', [TicketController::class, 'orderPage'])->name('order');
+        Route::post('/qrcode', [TicketController::class, 'createQrcode'])->name('qrcode');
+        Route::get('/{ticketId}/payment', [TicketController::class, 'paymentPage'])->name('payment');
     });
 });
 

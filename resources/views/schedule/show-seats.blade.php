@@ -140,7 +140,9 @@
                 data: data, // data yang akan dikirim ke BE
                 success: function (response) {
                     // kalo berhasil mau ngapain
-                    console.log(response);
+                    let ticketId = response.data.id;
+                    // pindah halaman : window.location.href
+                    window.location.href = `/tickets/${ticketId}/order`;
                 },
                 error: function (message) {
                     // kalo gagal mau ngapain
